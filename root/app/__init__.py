@@ -9,4 +9,5 @@ def create_app():
     
     with app.app_context():
         init_routes(app)
+        
     return app
