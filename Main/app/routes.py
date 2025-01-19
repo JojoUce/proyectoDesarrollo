@@ -17,10 +17,10 @@ def init_routes(app):
         recipe_service = recipeService()
         recipe = recipe_service.fetch_recipes(ingredients)
         
-        if "error" in recipes:
-            return jsonify({"error": recipes["error"]}), 500
+        if "error" in recipe:
+            return jsonify({"error": recipe["error"]}), 500
         
-        return jsonify({"Recetas": recipes]})
+        return jsonify({"Recetas": recipe})
        
         
         #return jsonify({"message": "Recetas personalizadas generadas"})
