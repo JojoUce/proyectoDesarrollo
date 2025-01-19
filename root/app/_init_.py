@@ -5,7 +5,7 @@ import os
 def create_app():
     
     load_dotenv()
-    app=Flask(_name_)    
+    app=Flask(__name__)    
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     
     with app.app_context():
