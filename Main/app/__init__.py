@@ -1,6 +1,9 @@
 from flask import Flask
-from app.config import Config
 from app.routes import init_routes
+from dotenv import load_dotenv 
+from app.routes import init_routes
+import os
+
 
 def create_app():
     
