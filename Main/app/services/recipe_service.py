@@ -1,10 +1,12 @@
 import requests
-from app.config import Config
+import os
+# Cargar las variables de entorno desde el archivo .env
 
 class RecipeService:
     def __init__(self):
-        self.api_key = Config.GEMINI_API_KEY
-        self.url = Config.GEMINI_API_URL
+        # Cargar las variables de entorno directamente
+        self.api_key = os.getenv('GEMINI_API_KEY')
+        self.url = os.getenv('GEMINI_API_URL')
 
     def fetch_recipes(self, ingredients):
         response = requests.post(self.url, 
