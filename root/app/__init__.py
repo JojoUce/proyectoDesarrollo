@@ -1,15 +1,12 @@
 from flask import Flask
-from dotenv import load_dotenv
-import os
+from app.config import Config
+from app.routes import init_routes
 
 def create_app():
     
-    load_dotenv()
     app=Flask(__name__)    
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     
     with app.app_context():
-        
-        from .routes import init_routes
         init_routes(app)
     return app
