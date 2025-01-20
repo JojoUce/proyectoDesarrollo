@@ -2,14 +2,13 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Login</title>
+    <title>Grupo 3 - Login</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,8 +19,36 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-</head>
+    <style>
+        /* Fondo principal */
+        .bg-gradient-primary {
+            background-image: url('img/imagen_comida_login.jpg'), url('img/imagen_chef_login.jpg'); 
+            background-size: cover, cover; /* Fondo de imagen principal cubre toda la pantalla, fondo superior cubre el área */
+            background-position: center, top center; /* La imagen principal cubre toda la pantalla, la imagen superior se coloca arriba */
+            background-repeat: no-repeat, no-repeat; /* Ambas imágenes no se repiten */
+            background-color: #28a745; /* Fondo verde en caso de que no cargue la imagen */
+        }
 
+        /* Fondo de la imagen superior */
+        .bg-login-image {
+            background-image: url('img/imagen_chef_login.jpg'); /* Imagen superior */
+            background-size: cover; /* Asegura que la imagen cubra todo el espacio disponible */
+            background-position: center top; /* Coloca la imagen en la parte superior */
+            background-repeat: no-repeat;
+        }
+
+        /* Estilos personalizados para los botones verdes */
+        .btn-verde {
+            background-color: rgba(20, 118, 50, 0.8); /* Verde oscuro y opaco */
+            border-color: rgba(20, 118, 50, 0.8);
+        }
+
+        .btn-verde:hover {
+            background-color: rgba(20, 118, 50, 1); /* Un verde más oscuro para el hover */
+            border-color: rgba(20, 118, 50, 1);
+        }
+    </style>
+</head>
 <body class="bg-gradient-primary">
 
     <div class="container">
@@ -35,46 +62,49 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
+                            <!-- Columna con la imagen de arriba -->
                             <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <!-- Columna con el formulario de login -->
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Bienvenido a grupo 3</h1>
                                     </div>
                                     <form class="user">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                                placeholder="Ingresa tu Usuario...">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" placeholder="Contraseña">
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
+                                                <label class="custom-control-label" for="customCheck">Recuerdame
+                                                    </label>
                                             </div>
                                         </div>
-                                        <a href="index.html" class="btn btn-primary btn-user btn-block">
+                                        <a href="index.html" class="btn btn-success btn-user btn-block">
                                             Login
                                         </a>
+                                        
                                         <hr>
                                         <a href="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
+                                            <i class="fab fa-google fa-fw"></i> Ingresar con Google
                                         </a>
                                         <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
+                                            <i class="fab fa-facebook-f fa-fw"></i> Ingresar con Facebook
                                         </a>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="forgot-password.html">¿Olvidaste tu contraseña?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="register.html">Crear una Cuenta!</a>
                                     </div>
                                 </div>
                             </div>
@@ -99,5 +129,4 @@
     <script src="js/sb-admin-2.min.js"></script>
 
 </body>
-
 </html>
