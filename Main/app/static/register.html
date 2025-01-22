@@ -54,34 +54,29 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Crear una Cuenta</h1>
                             </div>
-                            <form class="user">
+                            <form class="user" id="registerForm">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="Nombre">
+                                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="Nombre" required pattern="[A-Za-zÀ-ÿ\s]{2,50}">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Apellido">
+                                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Apellido" required pattern="[A-Za-zÀ-ÿ\s]{2,50}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Usuario o Correo Electronico">
+                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Usuario o Correo Electrónico" required>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Contraseña">
+                                        <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Contraseña" required minlength="8">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Confirmación de contraseña">
+                                        <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Confirmación de contraseña" required>
                                     </div>
                                 </div>
-                                <a href="login.html" class="btn btn-primary btn-user btn-block">
+                                <button type="submit" class="btn btn-primary btn-user btn-block">
                                     Registrar Cuenta
-                                </a>
+                                </button>
                                 <hr>
                                 <a href="index.html" class="btn btn-google btn-user btn-block">
                                     <i class="fab fa-google fa-fw"></i> Registrar con Google
@@ -114,6 +109,27 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita el envío por defecto del formulario
+    
+            // Validar contraseñas (opcional)
+            const password = document.getElementById('exampleInputPassword').value;
+            const confirmPassword = document.getElementById('exampleRepeatPassword').value;
+    
+            if (password !== confirmPassword) {
+                alert('Las contraseñas no coinciden.');
+                return;
+            }
+    
+            // Mostrar mensaje de éxito
+            alert('Registro exitoso. Redirigiendo al inicio de sesión...');
+    
+            // Redirigir al formulario de login
+            window.location.href = 'login.html';
+        });
+    </script>
 
 </body>
 
