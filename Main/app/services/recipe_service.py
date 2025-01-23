@@ -1,19 +1,26 @@
-import requests
-import os
-
-
 class recipeService:
     def __init__(self):
-        # Cargar las variables de entorno directamente
-        self.api_key = os.getenv('GEMINI_API_KEY')
-        self.url = os.getenv('GEMINI_API_URL')
+        # No necesitamos ninguna API externa por ahora
+        pass
 
     def fetch_recipes(self, ingredients):
-        try:
-            response = requests.post(self.url, 
-                                 json={"ingredients": ingredients},
-                                 headers={"Authorization": f"Bearer {self.api_key}"})
-            response.raise_forstatus()
-            return response.json()
-        except requests.exceptions.RequestException as rqst:
-            return {"error":str(rqst)}    
+        """ Método para obtener recetas basadas en ingredientes """
+
+        # Aquí definimos recetas fijas para hacer pruebas
+        recipes_db = [
+            {"name": "Pasta con tomate", "ingredients": ["pasta", "tomate", "ajo", "aceite de oliva"]},
+            {"name": "Ensalada de pollo", "ingredients": ["pollo", "lechuga", "tomate", "aceite de oliva"]},
+            {"name": "Tortilla de patatas", "ingredients": ["huevo", "patatas", "aceite de oliva", "sal"]},
+        ]
+        
+        matching_recipes = []
+
+        # Recorremos las recetas y comprobamos si contienen todos los ingredientes dados
+        for recipe in recipes_db:
+            if all(ingredient in recipe["ingredients"] for ingredient in ingredients):
+                matching_recipes.append(recipe)
+        
+        if not matching_recipes:
+            return {"error": "No se encontraron recetas con los ingredientes proporcionados"}
+        
+        return matching_recipes

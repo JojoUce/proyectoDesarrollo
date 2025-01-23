@@ -1,19 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Blueprint, jsonify, request
 from app.services.recipe_service import recipeService
 
+main = Blueprint('main', __name__)
 
 def init_routes(app):
     @app.route('/ingredients', methods=['POST'])
-    
     def get_recipes():
-        #Obtener los ingredientes
+        # Obtener los ingredientes
         data = request.json
         ingredients = data.get("ingredients")
         
         if not ingredients:
-            return jsonify({"error": "No se ingresó "}), 400   
-        
-        #Instancia y obtención de recetas
+            return jsonify({"error": "No se ingresó ingredientes"}), 400   
+
+        # Instanciar el servicio y obtener las recetas
         recipe_service = recipeService()
         recipe = recipe_service.fetch_recipes(ingredients)
         
@@ -21,8 +21,3 @@ def init_routes(app):
             return jsonify({"error": recipe["error"]}), 500
         
         return jsonify({"Recetas": recipe})
-       
-        
-        #return jsonify({"message": "Recetas personalizadas generadas"})
-        
-        
