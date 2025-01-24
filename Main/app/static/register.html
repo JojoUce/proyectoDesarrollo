@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -57,22 +56,28 @@
                             <form class="user" id="registerForm">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="Nombre" required pattern="[A-Za-zÀ-ÿ\s]{2,50}">
+                                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="Nombre de Usuario" required pattern="[A-Za-zÀ-ÿ\s]{2,50}">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Apellido" required pattern="[A-Za-zÀ-ÿ\s]{2,50}">
+                                        <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Correo Electrónico" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Usuario o Correo Electrónico" required>
+                                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Contraseña" required minlength="8">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Confirmación de Contraseña" required>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Contraseña" required minlength="8">
+                                        <input type="number" class="form-control form-control-user" id="edad" placeholder="Edad" required min="18" max="100">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Confirmación de contraseña" required>
+                                        <input type="number" class="form-control form-control-user" id="altura" placeholder="Altura (en metros)" required step="0.01" min="0.5" max="3.0">
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" id="exampleHash" placeholder="Hash de Contraseña (opcional)" > <!-- Campo para el hash -->
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-user btn-block">
                                     Registrar Cuenta
@@ -87,7 +92,7 @@
                             </form>
                             <hr>
                             <div class="text-center">
-                                <a class="small" href="forgot-password.html">¿Olvidaste tu contraseña</a>
+                                <a class="small" href="forgot-password.html">¿Olvidaste tu contraseña?</a>
                             </div>
                             <div class="text-center">
                                 <a class="small" href="login.html">¿Tienes una Cuenta? Ingresa</a>
@@ -110,26 +115,59 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
+
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Evita el envío por defecto del formulario
     
-            // Validar contraseñas (opcional)
+            // Obtener los valores del formulario
+            const nombreUsuario = document.getElementById('exampleFirstName').value;
+            const email = document.getElementById('exampleInputEmail').value;
             const password = document.getElementById('exampleInputPassword').value;
-            const confirmPassword = document.getElementById('exampleRepeatPassword').value;
+            const edad = document.getElementById('edad').value;
+            const altura = document.getElementById('altura').value;
+            const hash = document.getElementById('exampleHash').value;  // Obtiene el valor del hash
     
+            // Validar contraseñas
+            const confirmPassword = document.getElementById('exampleRepeatPassword').value;
             if (password !== confirmPassword) {
                 alert('Las contraseñas no coinciden.');
                 return;
             }
     
-            // Mostrar mensaje de éxito
-            alert('Registro exitoso. Redirigiendo al inicio de sesión...');
+            // Crear un objeto con los datos del formulario
+            const formData = {
+                nombre_usuario: nombreUsuario,
+                correo_electronico: email,
+                contrasena_hash: hash || password,  // Si el hash está vacío, se usa la contraseña sin hash
+                edad: edad,
+                altura: altura
+            };
     
-            // Redirigir al formulario de login
-            window.location.href = 'login.html';
+            // Enviar la solicitud al backend usando AJAX
+            fetch('http://localhost:5000/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Usuario creado exitosamente');
+                    window.location.href = 'login.html';  // Redirigir al login
+                } else {
+                    alert('Error al crear usuario: ' + data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Hubo un error al enviar los datos.');
+            });
         });
     </script>
+    
 
 </body>
 
