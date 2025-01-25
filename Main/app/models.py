@@ -27,7 +27,13 @@ class RestriccionesDieteticas(db.Model):
 
 class UsuarioRestricciones(db.Model):
     __tablename__ = 'usuario_restricciones'
+
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
-    usuario_id = db.Column(db.String(36), db.ForeignKey('usuarios.id', ondelete='CASCADE'), nullable=False)
-    restriccion_id = db.Column(db.String(36), db.ForeignKey('restricciones_dieteticas.id', ondelete='CASCADE'), nullable=False)
+    usuario_id = db.Column(db.String(36), db.ForeignKey('usuarios.id'), nullable=False)
+    restriccion_id = db.Column(db.String(36), db.ForeignKey('restricciones_dieteticas.id'), nullable=False)
+
+    # Relación con las tablas correspondientes
+    usuario = db.relationship('Usuario', backref=db.backref('restricciones', lazy=True))
+    restriccion = db.relationship('RestriccionesDieteticas', backref=db.backref('usuarios_restricciones', lazy=True))
+
 

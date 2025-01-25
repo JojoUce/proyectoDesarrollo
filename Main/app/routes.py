@@ -89,9 +89,42 @@ def obtener_restricciones(usuario_id):
     resultado = [
         {
             "id": r.id,
-            "nombre": r.restriccion.nombre,
-            "descripcion": r.restriccion.descripcion
+            "nombre": r.restriccion.nombre,  # Accedemos al nombre de la restricción a través de la relación
+            "descripcion": r.restriccion.descripcion  # Accedemos a la descripción de la restricción
         }
         for r in restricciones
     ]
     return jsonify({"restricciones": resultado}), 200
+
+
+@bp.route('/restricciones_dieteticas', methods=['POST'])
+def agregar_restriccion_dietetica():
+    data = request.json
+    nombre = data.get('nombre')
+    descripcion = data.get('descripcion')
+
+    if not nombre:
+        return jsonify({"error": "El campo 'nombre' es obligatorio"}), 400
+
+    # Verificar si la restricción ya existe
+    existente = RestriccionesDieteticas.query.filter_by(nombre=nombre).first()
+    if existente:
+        return jsonify({"message": "La restricción dietética ya existe"}), 200
+
+    nueva_restriccion = RestriccionesDieteticas(nombre=nombre, descripcion=descripcion)
+    db.session.add(nueva_restriccion)
+    db.session.commit()
+    return jsonify({"message": "Restricción dietética agregada correctamente"}), 201
+
+@bp.route('/restricciones_dieteticas', methods=['GET'])
+def listar_restricciones_dieteticas():
+    restricciones = RestriccionesDieteticas.query.all()
+    resultado = [
+        {
+            "id": restriccion.id,
+            "nombre": restriccion.nombre,
+            "descripcion": restriccion.descripcion
+        }
+        for restriccion in restricciones
+    ]
+    return jsonify({"restricciones_dieteticas": resultado}), 200
