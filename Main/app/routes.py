@@ -1,5 +1,10 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
 from app.services.recipe_service import recipeService
+from flask_login import current_user, login_required
+from flask_login import login_user
+from flask_login import logout_user
+from uuid import UUID  # Asegúrate de importar UUI
+
 from app.models import Usuario, db  
 import uuid
 
@@ -80,7 +85,9 @@ def login():
 
     if not usuario.verificar_contrasena(contrasena):
         return jsonify({'error': 'Contraseña incorrecta'}), 401
-
+    
+    login_user(usuario)
+    print(f"Usuario autenticado: {current_user.is_authenticated}")
 
     return jsonify({
         'message': 'Inicio de sesión exitoso',
@@ -88,16 +95,19 @@ def login():
         'nombre_usuario': usuario.nombre_usuario,
         'correo_electronico': usuario.correo_electronico
     })
-
 @bp.route('/users/<id>', methods=['PUT'])
+@login_required  # Protege la ruta con autenticación
 def update_user(id):
-    data = request.json
-
     try:
-        # Convierte el id a un UUID válido
-        id_uuid = uuid.UUID(id)  # Convertimos la cadena a UUID
+        id_uuid = UUID(id)  # Convertimos la cadena a UUID
     except ValueError:
         return jsonify({"message": "ID no válido"}), 400  # Si no es un UUID válido
+
+    # Verificar si el ID en la URL coincide con el ID del usuario autenticado
+    if str(current_user.id) != str(id_uuid):  # Asegurarse de comparar como cadenas de texto
+        return jsonify({"error": "No tienes permisos para modificar este usuario"}), 403  # Forbidden
+
+    data = request.json
 
     # Buscar al usuario en la base de datos usando el UUID
     usuario = Usuario.query.filter_by(id=id_uuid).first()
@@ -128,6 +138,27 @@ def update_user(id):
     db.session.commit()
 
     return jsonify({"message": "Usuario actualizado exitosamente!"}), 200
+
+@bp.route('/logout', methods=['POST'])
+@login_required  # Asegúrate de que solo los usuarios autenticados puedan cerrar sesión
+def logout():
+    logout_user()
+    return jsonify({'message': 'Sesión cerrada correctamente'}), 200
+
+@bp.route('/current_user', methods=['GET'])
+def get_current_user():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "No estas autenticado"}), 401  # o redirigir a login
+    
+    current_app.logger.debug(f'User is authenticated: {current_user.is_authenticated}')
+    current_app.logger.debug(f'User ID: {current_user.id}')
+    
+    user_data = {
+        'id': current_user.id,
+        'nombre_usuario': current_user.nombre_usuario,
+        'correo_electronico': current_user.correo_electronico
+    }
+    return jsonify(user_data)
 
 
 

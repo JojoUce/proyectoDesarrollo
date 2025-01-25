@@ -327,8 +327,8 @@
                         <!-- Tu archivo HTML (por ejemplo, index.html) -->
 <li class="nav-item dropdown no-arrow">
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <!-- Usamos Jinja para mostrar el nombre del usuario autenticado -->
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ username }}</span>
+        <!-- Usaremos JavaScript para agregar el nombre del usuario aquí -->
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="username"></span>
         <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
     </a>
     <!-- Dropdown - User Information -->
@@ -750,6 +750,35 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
+
+    <script>
+        async function getCurrentUser() {
+    try {
+        const response = await fetch('http://localhost:5000/current_user', {
+            method: 'GET',
+            
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'  // Asegura que se envíen las cookies
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            // Coloca el nombre del usuario en el span con id="username"
+            document.getElementById('username').textContent = userData.nombre_usuario;
+        } else {
+            console.error("No se pudo obtener la información del usuario.");
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Llamar a la función cuando la página cargue
+window.onload = getCurrentUser;
+
+    </script>
 
 </body>
 

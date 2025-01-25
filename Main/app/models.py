@@ -1,9 +1,10 @@
 from app import db
 from datetime import datetime
 from uuid import uuid4
+from flask_login import UserMixin 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class Usuario(db.Model):
+class Usuario(db.Model, UserMixin):  # Heredamos de UserMixin
     __tablename__ = 'usuarios'
 
     # Definir columnas
@@ -28,14 +29,6 @@ class Usuario(db.Model):
     def verificar_contrasena(self, contrasena):
         """Verifica si la contraseña proporcionada coincide con el hash almacenado"""
         return check_password_hash(self.contrasena_hash, contrasena)
-    
-    # Método de Flask-Login para obtener el id del usuario
-    def get_id(self):
-        return self.id
-
-    # Método para verificar si el usuario está autenticado
-    def is_authenticated(self):
-        return True
 
 class Receta(db.Model):
     __tablename__ = 'recetas'

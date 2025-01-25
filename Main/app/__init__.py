@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 from flask_login import LoginManager
 
+from uuid import UUID
+
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
@@ -21,8 +23,22 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    login_manager.login_view = 'login' 
+    login_manager.login_view = '/Main/app/static/login.html' 
     from .routes import init_routes
     init_routes(app)
 
     return app
+
+@login_manager.user_loader
+def load_user(user_id):
+    from .models import Usuario
+    try:
+        user_id = UUID(user_id)
+        user = Usuario.query.get(str(user_id))
+        print(f'Usuario cargado: {user}')  # Asegúrate de que el usuario se cargue correctamente
+        return user
+    except ValueError:
+        print('Error al cargar el usuario: ID no válido')  # Depuración en caso de error
+        return None
+
+

@@ -359,34 +359,33 @@
 
                 <!-- Begin Page Content -->
 <!-- Begin Page Content -->
+<!-- update_user.html -->
 <div class="container-fluid">
-
-    <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Actualizar Usuario</h1>
 
     <!-- Formulario para actualizar usuario -->
     <form id="updateForm">
-        <!-- Aquí el id se maneja automáticamente y no es visible en el formulario -->
-        <input type="hidden" id="id" name="id" value="user-id-from-server"><br>
+        <!-- El id se pasa desde Flask como variable de plantilla -->
+        <input type="hidden" id="id" name="id" value="{{ usuario.id }}"><br>
 
         <div class="form-group">
             <label for="nombre_usuario">Nombre de Usuario:</label>
-            <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario"><br>
+            <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" value="{{ usuario.nombre_usuario }}"><br>
         </div>
 
         <div class="form-group">
             <label for="correo_electronico">Correo Electrónico:</label>
-            <input type="email" class="form-control" id="correo_electronico" name="correo_electronico"><br>
+            <input type="email" class="form-control" id="correo_electronico" name="correo_electronico" value="{{ usuario.correo_electronico }}"><br>
         </div>
 
         <div class="form-group">
             <label for="edad">Edad:</label>
-            <input type="number" class="form-control" id="edad" name="edad"><br>
+            <input type="number" class="form-control" id="edad" name="edad" value="{{ usuario.edad }}"><br>
         </div>
 
         <div class="form-group">
             <label for="altura">Altura:</label>
-            <input type="number" class="form-control" id="altura" name="altura" step="0.01"><br>
+            <input type="number" class="form-control" id="altura" name="altura" value="{{ usuario.altura }}" step="0.01"><br>
         </div>
 
         <div class="form-group">
@@ -399,8 +398,55 @@
 
     <!-- Mensaje de respuesta -->
     <p id="responseMessage"></p>
-
 </div>
+
+<script>
+    // Agregar evento al enviar el formulario
+    document.getElementById('updateForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Evitar que el formulario se envíe de la forma tradicional
+
+        var id = document.getElementById('id').value;
+        var nombre_usuario = document.getElementById('nombre_usuario').value;
+        var correo_electronico = document.getElementById('correo_electronico').value;
+        var edad = document.getElementById('edad').value;
+        var altura = document.getElementById('altura').value;
+        var contrasena = document.getElementById('contrasena').value;
+
+        // Crear el objeto de datos para enviar
+        var data = {
+            nombre_usuario: nombre_usuario,
+            correo_electronico: correo_electronico,
+            edad: edad,
+            altura: altura,
+            contrasena: contrasena
+        };
+
+        // Realizar la petición AJAX para actualizar al usuario
+        fetch(`/users/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Mostrar mensaje de éxito o error
+            if (data.message) {
+                document.getElementById('responseMessage').innerText = data.message;
+                document.getElementById('responseMessage').style.color = 'green';
+            } else if (data.error) {
+                document.getElementById('responseMessage').innerText = data.error;
+                document.getElementById('responseMessage').style.color = 'red';
+            }
+        })
+        .catch(error => {
+            document.getElementById('responseMessage').innerText = 'Error al actualizar los datos.';
+            document.getElementById('responseMessage').style.color = 'red';
+        });
+    });
+</script>
+
 <!-- End Page Content -->
                 <!-- /.container-fluid -->
 
