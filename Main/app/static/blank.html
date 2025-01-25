@@ -358,108 +358,50 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
+<!-- Begin Page Content -->
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Configuración del Usuario</h1>
+    <h1 class="h3 mb-4 text-gray-800">Actualizar Usuario</h1>
 
-    <!-- Formulario de Configuración -->
-    <form id="configuracion-form" action="/configuracion" method="POST">
+    <!-- Formulario para actualizar usuario -->
+    <form id="updateForm">
+        <!-- Aquí el id se maneja automáticamente y no es visible en el formulario -->
+        <input type="hidden" id="id" name="id" value="user-id-from-server"><br>
 
-        <!-- Información Personal -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Información Personal</h6>
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="nombre">Nombre:</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre" value="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="correo">Correo Electrónico:</label>
-                    <input type="email" class="form-control" id="correo" name="correo" value="" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="edad">Edad:</label>
-                    <input type="number" class="form-control" id="edad" name="edad" value="" min="0" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="altura">Altura:</label>
-                    <input type="number" class="form-control" id="altura" name="altura" value="" step="0.01" required>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="nombre_usuario">Nombre de Usuario:</label>
+            <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario"><br>
         </div>
 
-        <!-- Restricciones Dietéticas -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Restricciones Dietéticas</h6>
-            </div>
-            <div class="card-body">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="gluten" name="restricciones[]" value="sin_gluten">
-                    <label class="form-check-label" for="gluten">Sin Gluten</label>
-                </div>
-
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="lactosa" name="restricciones[]" value="sin_lactosa">
-                    <label class="form-check-label" for="lactosa">Sin Lactosa</label>
-                </div>
-
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="vegan" name="restricciones[]" value="vegano">
-                    <label class="form-check-label" for="vegan">Vegano</label>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="correo_electronico">Correo Electrónico:</label>
+            <input type="email" class="form-control" id="correo_electronico" name="correo_electronico"><br>
         </div>
 
-        <!-- Preferencias de Recetas -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Preferencias de Recetas</h6>
-            </div>
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="tipo_cocina">Tipo de Cocina:</label>
-                    <select class="form-control" id="tipo_cocina" name="tipo_cocina">
-                        <option value="italiana">Italiana</option>
-                        <option value="mexicana">Mexicana</option>
-                        <option value="vegana">Vegana</option>
-                        <option value="vegetariana">Vegetariana</option>
-                    </select>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="edad">Edad:</label>
+            <input type="number" class="form-control" id="edad" name="edad"><br>
         </div>
 
-        <!-- Notificaciones -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Notificaciones</h6>
-            </div>
-            <div class="card-body">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="notificaciones_recetas" name="notificaciones[]" checked>
-                    <label class="form-check-label" for="notificaciones_recetas">Recibir notificaciones de nuevas recetas</label>
-                </div>
-
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="notificaciones_alertas" name="notificaciones[]" checked>
-                    <label class="form-check-label" for="notificaciones_alertas">Recibir alertas sobre alergias</label>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="altura">Altura:</label>
+            <input type="number" class="form-control" id="altura" name="altura" step="0.01"><br>
         </div>
 
-        <!-- Botón de Guardar Cambios -->
-        <button type="submit" class="btn btn-primary btn-block">Guardar Cambios</button>
+        <div class="form-group">
+            <label for="contrasena">Contraseña:</label>
+            <input type="password" class="form-control" id="contrasena" name="contrasena"><br>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
     </form>
+
+    <!-- Mensaje de respuesta -->
+    <p id="responseMessage"></p>
 
 </div>
 <!-- End Page Content -->
-
                 <!-- /.container-fluid -->
 
             </div>
@@ -517,5 +459,47 @@
     <script src="js/sb-admin-2.min.js"></script>
 
 </body>
+
+<script>
+    document.getElementById('updateForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        // Obtener los valores del formulario
+        const id = document.getElementById('id').value;
+        const nombre_usuario = document.getElementById('nombre_usuario').value;
+        const correo_electronico = document.getElementById('correo_electronico').value;
+        const edad = document.getElementById('edad').value;
+        const altura = document.getElementById('altura').value;
+        const contrasena = document.getElementById('contrasena').value;
+
+        const data = {
+            nombre_usuario: nombre_usuario || undefined,
+            correo_electronico: correo_electronico || undefined,
+            edad: edad || undefined,
+            altura: altura || undefined,
+            contrasena: contrasena || undefined
+        };
+
+        // Hacer la solicitud PUT
+        const response = await fetch(`/users/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        const responseData = await response.json();
+        const messageElement = document.getElementById('responseMessage');
+
+        if (response.ok) {
+            messageElement.textContent = responseData.message;
+            messageElement.style.color = 'green';
+        } else {
+            messageElement.textContent = responseData.error || responseData.message;
+            messageElement.style.color = 'red';
+        }
+    });
+</script>
 
 </html>
