@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime
 from uuid import uuid4
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Usuario(db.Model):
     __tablename__ = 'usuarios'
@@ -17,3 +18,13 @@ class Usuario(db.Model):
 
     def __repr__(self):
         return f"<Usuario {self.nombre_usuario}>"
+
+    # Método para asignar una contraseña hasheada
+    def set_contrasena(self, contrasena):
+        """Genera un hash para la contraseña y lo guarda en la base de datos"""
+        self.contrasena_hash = generate_password_hash(contrasena)
+
+    # Método para verificar la contraseña ingresada
+    def verificar_contrasena(self, contrasena):
+        """Verifica si la contraseña proporcionada coincide con el hash almacenado"""
+        return check_password_hash(self.contrasena_hash, contrasena)

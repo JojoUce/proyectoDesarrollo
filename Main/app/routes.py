@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.services.recipe_service import recipeService
-from app.models import Usuario, db  # Ajustado para usar Usuario en lugar de User
+from app.models import Usuario, db  
 
 bp = Blueprint('main', __name__)
 
@@ -15,7 +15,7 @@ def init_routes(app):
         
         # Validación: Verificar si se ingresaron ingredientes
         if not ingredients:
-            return jsonify({"error": "No se ingresó ingredientes"}), 400   
+            return jsonify({"error": "No se ingresaron ingredientes"}), 400   
 
         # Instanciar el servicio de recetas y obtener resultados
         recipe_service = recipeService()
@@ -26,13 +26,14 @@ def init_routes(app):
             return jsonify({"error": recipe["error"]}), 500
         
         return jsonify({"Recetas": recipe})
-    
+
+# Ruta para crear un usuario
 @bp.route('/users', methods=['POST'])
 def create_user():
     data = request.json
 
     # Verificar que todos los campos necesarios estén presentes
-    required_fields = ['nombre_usuario', 'correo_electronico', 'contrasena_hash', 'edad', 'altura']
+    required_fields = ['nombre_usuario', 'correo_electronico', 'contrasena', 'edad', 'altura']
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"Falta el campo obligatorio: {field}"}), 400
@@ -41,25 +42,51 @@ def create_user():
     new_user = Usuario(
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
-        contrasena_hash=data['contrasena_hash'],
         edad=data['edad'],
         altura=data['altura']
     )
-    
+
+    new_user.set_contrasena(data['contrasena'])
+
+
     db.session.add(new_user)
     db.session.commit()
-    
+
     return jsonify({'message': 'Usuario creado exitosamente!'}), 201
 
 
-# Ruta para obtener todos los usuarios
 @bp.route('/users', methods=['GET'])
 def get_users():
-    usuarios = Usuario.query.all()  # Ajustado para usar Usuario
-    result = [{'id': u.id, 'nombre_usuario': u.nombre_usuario, 'correo_electronico': u.correo_electronico} for u in usuarios]  # Ajustado para mostrar los campos correctos
+    usuarios = Usuario.query.all()
+    result = [{'id': u.id, 'nombre_usuario': u.nombre_usuario, 'correo_electronico': u.correo_electronico} for u in usuarios]
     return jsonify(result)
 
+# Ruta para el login de usuarios
+@bp.route('/login', methods=['POST'])
+def login():
+    # Obtener datos del cliente
+    data = request.json
+    nombre_usuario = data.get('nombre_usuario')
+    contrasena = data.get('contrasena')
 
-# Registrar las rutas en la aplicación
+    # Buscar el usuario en la base de datos
+    usuario = Usuario.query.filter_by(nombre_usuario=nombre_usuario).first()
+
+    if not usuario:
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+
+
+    if not usuario.verificar_contrasena(contrasena):
+        return jsonify({'error': 'Contraseña incorrecta'}), 401
+
+
+    return jsonify({
+        'message': 'Inicio de sesión exitoso',
+        'id': usuario.id,
+        'nombre_usuario': usuario.nombre_usuario,
+        'correo_electronico': usuario.correo_electronico
+    })
+
+
 def register_routes(app):
     app.register_blueprint(bp)
