@@ -358,12 +358,108 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+<div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Configuración del Usuario</h1>
 
+    <!-- Formulario de Configuración -->
+    <form id="configuracion-form" action="/configuracion" method="POST">
+
+        <!-- Información Personal -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Información Personal</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico:</label>
+                    <input type="email" class="form-control" id="correo" name="correo" value="" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edad">Edad:</label>
+                    <input type="number" class="form-control" id="edad" name="edad" value="" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="altura">Altura:</label>
+                    <input type="number" class="form-control" id="altura" name="altura" value="" step="0.01" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restricciones Dietéticas -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Restricciones Dietéticas</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="gluten" name="restricciones[]" value="sin_gluten">
+                    <label class="form-check-label" for="gluten">Sin Gluten</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="lactosa" name="restricciones[]" value="sin_lactosa">
+                    <label class="form-check-label" for="lactosa">Sin Lactosa</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="vegan" name="restricciones[]" value="vegano">
+                    <label class="form-check-label" for="vegan">Vegano</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferencias de Recetas -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Preferencias de Recetas</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="tipo_cocina">Tipo de Cocina:</label>
+                    <select class="form-control" id="tipo_cocina" name="tipo_cocina">
+                        <option value="italiana">Italiana</option>
+                        <option value="mexicana">Mexicana</option>
+                        <option value="vegana">Vegana</option>
+                        <option value="vegetariana">Vegetariana</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Notificaciones</h6>
+            </div>
+            <div class="card-body">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="notificaciones_recetas" name="notificaciones[]" checked>
+                    <label class="form-check-label" for="notificaciones_recetas">Recibir notificaciones de nuevas recetas</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="notificaciones_alertas" name="notificaciones[]" checked>
+                    <label class="form-check-label" for="notificaciones_alertas">Recibir alertas sobre alergias</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de Guardar Cambios -->
+        <button type="submit" class="btn btn-primary btn-block">Guardar Cambios</button>
+    </form>
+
+</div>
+<!-- End Page Content -->
+
                 <!-- /.container-fluid -->
 
             </div>
