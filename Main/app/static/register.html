@@ -76,9 +76,6 @@
                                         <input type="number" class="form-control form-control-user" id="altura" placeholder="Altura (en metros)" required step="0.01" min="0.5" max="3.0">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" id="exampleHash" placeholder="Hash de Contraseña (opcional)" > <!-- Campo para el hash -->
-                                </div>
                                 <button type="submit" class="btn btn-primary btn-user btn-block">
                                     Registrar Cuenta
                                 </button>
@@ -115,7 +112,6 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-
     <script>
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Evita el envío por defecto del formulario
@@ -126,7 +122,6 @@
             const password = document.getElementById('exampleInputPassword').value;
             const edad = document.getElementById('edad').value;
             const altura = document.getElementById('altura').value;
-            const hash = document.getElementById('exampleHash').value;  // Obtiene el valor del hash
     
             // Validar contraseñas
             const confirmPassword = document.getElementById('exampleRepeatPassword').value;
@@ -139,7 +134,7 @@
             const formData = {
                 nombre_usuario: nombreUsuario,
                 correo_electronico: email,
-                contrasena_hash: hash || password,  // Si el hash está vacío, se usa la contraseña sin hash
+                contrasena: password,  // Enviar la contraseña en texto sin procesar
                 edad: edad,
                 altura: altura
             };
@@ -167,7 +162,6 @@
             });
         });
     </script>
-    
 
 </body>
 
