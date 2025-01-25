@@ -4,6 +4,12 @@ from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
 from flask_login import LoginManager
+import logging
+
+# Configurar el nivel de logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 
 from uuid import UUID
 
@@ -14,7 +20,7 @@ login_manager = LoginManager()
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-
+    
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -23,7 +29,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    login_manager.login_view = '/Main/app/static/login.html' 
+    login_manager.login_view = 'bp.login' 
     from .routes import init_routes
     init_routes(app)
 

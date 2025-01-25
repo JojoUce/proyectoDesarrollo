@@ -751,34 +751,25 @@
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 
-    <script>
-        async function getCurrentUser() {
-    try {
-        const response = await fetch('http://localhost:5000/current_user', {
-            method: 'GET',
-            
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'  // Asegura que se envíen las cookies
-        });
+<script>
+    // Al cargar la página
+    document.addEventListener('DOMContentLoaded', function () {
+        // Realizamos una petición AJAX para obtener los datos del usuario
+        fetch('http://localhost:5000/current_user')
+            .then(response => response.json())
+            .then(data => {
+                if (data.nombre_usuario) {
+                    // Si el usuario está autenticado, actualizar el nombre
+                    document.getElementById('username').textContent = data.nombre_usuario;
+                } 
+            })
+            .catch(error => {
+                console.error('Error al obtener datos del usuario:', error);
+            });
+    });
+</script>
 
-        if (response.ok) {
-            const userData = await response.json();
-            // Coloca el nombre del usuario en el span con id="username"
-            document.getElementById('username').textContent = userData.nombre_usuario;
-        } else {
-            console.error("No se pudo obtener la información del usuario.");
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-// Llamar a la función cuando la página cargue
-window.onload = getCurrentUser;
-
-    </script>
+    
 
 </body>
 

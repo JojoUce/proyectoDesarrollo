@@ -1,4 +1,5 @@
-from flask import Blueprint, current_app, jsonify, redirect, render_template, request, url_for
+from venv import logger
+from flask import Blueprint, current_app, jsonify, redirect, render_template, request, session, url_for
 from app.services.recipe_service import recipeService
 from flask_login import current_user, login_required
 from flask_login import login_user
@@ -10,6 +11,8 @@ import uuid
 
 
 bp = Blueprint('main', __name__)
+
+
 
 # Función para inicializar rutas
 def init_routes(app):
@@ -68,7 +71,7 @@ def get_users():
     result = [{'id': u.id, 'nombre_usuario': u.nombre_usuario, 'correo_electronico': u.correo_electronico} for u in usuarios]
     return jsonify(result)
 
-# Ruta para el login de usuarios
+
 @bp.route('/login', methods=['POST'])
 def login():
     # Obtener datos del cliente
@@ -82,19 +85,24 @@ def login():
     if not usuario:
         return jsonify({'error': 'Usuario no encontrado'}), 404
 
-
     if not usuario.verificar_contrasena(contrasena):
         return jsonify({'error': 'Contraseña incorrecta'}), 401
     
+    # Iniciar sesión y guardar las cookies
     login_user(usuario)
-    print(f"Usuario autenticado: {current_user.is_authenticated}")
+    
+    # Imprimir las cookies de sesión
+    print(f"Session cookies: {session}")
 
     return jsonify({
         'message': 'Inicio de sesión exitoso',
         'id': usuario.id,
         'nombre_usuario': usuario.nombre_usuario,
         'correo_electronico': usuario.correo_electronico
-    })
+    }), 200
+
+
+
 @bp.route('/users/<id>', methods=['PUT'])
 @login_required  # Protege la ruta con autenticación
 def update_user(id):
@@ -147,11 +155,11 @@ def logout():
 
 @bp.route('/current_user', methods=['GET'])
 def get_current_user():
+
+    print(f"Cookies recibidas: {request.cookies}")
+    
     if not current_user.is_authenticated:
         return jsonify({"error": "No estas autenticado"}), 401  # o redirigir a login
-    
-    current_app.logger.debug(f'User is authenticated: {current_user.is_authenticated}')
-    current_app.logger.debug(f'User ID: {current_user.id}')
     
     user_data = {
         'id': current_user.id,
