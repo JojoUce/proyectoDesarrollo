@@ -17,3 +17,17 @@ class Usuario(db.Model):
 
     def __repr__(self):
         return f"<Usuario {self.nombre_usuario}>"
+
+
+class RestriccionesDieteticas(db.Model):
+    __tablename__ = 'restricciones_dieteticas'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    nombre = db.Column(db.String(50), unique=True, nullable=False)
+    descripcion = db.Column(db.Text)
+
+class UsuarioRestricciones(db.Model):
+    __tablename__ = 'usuario_restricciones'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    usuario_id = db.Column(db.String(36), db.ForeignKey('usuarios.id', ondelete='CASCADE'), nullable=False)
+    restriccion_id = db.Column(db.String(36), db.ForeignKey('restricciones_dieteticas.id', ondelete='CASCADE'), nullable=False)
+
