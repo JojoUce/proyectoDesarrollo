@@ -3,69 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-
+    <title>Bienvenido</title>
+    <!-- Vincular archivo CSS externo -->
+    <link rel="stylesheet" href="/static/css/styles2.css">
+    <!-- Vincular Font Awesome para los íconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-<body >
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <h1 class="navbar-logo">Mi Aplicación</h1>
+<body>
+    <!-- Sidebar de navegación -->
+    <div class="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
+        <div class="sidebar-header">
+            <h2>GRUPO</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><i class="fas fa-tachometer-alt"></i><a href="#">Dashboard</a></li>
+            <li><i class="fas fa-cogs"></i><a href="#">Interface</a></li>
+            <li><i class="fas fa-cogs"></i><a href="#">Components</a></li>
+            <li><i class="fas fa-palette"></i><a href="#">Utilities</a></li>
+            <li><i class="fas fa-plug"></i><a href="#">Addons</a></li>
+            <li><i class="fas fa-file-alt"></i><a href="#">Pages</a></li>
+            <li><i class="fas fa-chart-pie"></i><a href="#">Charts</a></li>
+            <li><i class="fas fa-table"></i><a href="#">Tables</a></li>
+        </ul>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <!-- Barra de navegación superior -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-search">
+                    <input class="search-input" type="text" placeholder="Buscar...">
+                    <button class="search-button">Buscar</button>
+                </div>
+            </div>
             <div class="navbar-user-info">
-                <span class="user-name">Bienvenido, {{ usuario.nombre_usuario }}!</span>
+                <span class="user-name">Bienvenido, {{ current_user.nombre_usuario }}</span>
                 <div class="dropdown">
-                    <button class="dropbtn">Configuración</button>
+                    <button class="dropbtn">
+                        <i class="fas fa-cogs"></i> Configuración
+                    </button>
                     <div class="dropdown-content">
                         <a href="{{ url_for('bp.perfil') }}">Perfil</a>
                         <a href="{{ url_for('bp.logout') }}">Cerrar sesión</a>
                     </div>
                 </div>
             </div>
+        </nav>
+
+        <!-- Mensajes flash (solo mostrar si existen) -->
+        <div id="flash-messages" class="flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
         </div>
-    </nav>
 
-    <!-- Mensajes flash (solo mostrar si existen) -->
-    <div id="flash-messages" class="flash-container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <div class="content-area">
+            <h2>Editar Perfil</h2>
+            <form method="POST" action="{{ url_for('bp.perfil') }}">
+                <div class="form-group-2">
+                    <label for="nombre_usuario">Nombre de Usuario:</label>
+                    <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" required>
+                </div>
+    
+                <div class="form-group-2">
+                    <label for="correo_electronico">Correo Electrónico:</label>
+                    <input type="email" id="correo_electronico" name="correo_electronico" value="{{ usuario.correo_electronico }}" required>
+                </div>
+    
+                <div class="form-group-2">
+                    <label for="edad">Edad:</label>
+                    <input type="number" id="edad" name="edad" value="{{ usuario.edad }}" required>
+                </div>
+    
+                <div class="form-group-2">
+                    <label for="altura">Altura (en cm):</label>
+                    <input type="number" id="altura" name="altura" value="{{ usuario.altura }}" required>
+                </div>
+    
+                <button type="submit" class="btn-2">Actualizar Perfil</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Formulario para editar perfil -->
-    <div class="perfil-form-2">
-        <h2>Editar Perfil</h2>
-        <form method="POST" action="{{ url_for('bp.perfil') }}">
-            <div class="form-group-2">
-                <label for="nombre_usuario">Nombre de Usuario:</label>
-                <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" required>
-            </div>
-
-            <div class="form-group-2">
-                <label for="correo_electronico">Correo Electrónico:</label>
-                <input type="email" id="correo_electronico" name="correo_electronico" value="{{ usuario.correo_electronico }}" required>
-            </div>
-
-            <div class="form-group-2">
-                <label for="edad">Edad:</label>
-                <input type="number" id="edad" name="edad" value="{{ usuario.edad }}" required>
-            </div>
-
-            <div class="form-group-2">
-                <label for="altura">Altura (en cm):</label>
-                <input type="number" id="altura" name="altura" value="{{ usuario.altura }}" required>
-            </div>
-
-            <button type="submit" class="btn-2">Actualizar Perfil</button>
-        </form>
-    </div>
-
-    <script src="/static/js/message.js"></script> <!-- Incluye tu script para mensajes -->
+    <!-- Vincular archivo JS externo -->
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/message.js"></script>
 </body>
 </html>
