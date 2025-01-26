@@ -24,10 +24,25 @@
         </div>
     </nav>
 
+    <!-- Mensajes flash (solo mostrar si existen) -->
+    <div id="flash-messages" class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <!-- Contenido Principal -->
     <div class="main-content">
         <h2>Contenido Principal</h2>
         <p>Aquí va el contenido de la página principal. Este contenido ahora ocupará toda la página.........................................</p>
     </div>
+
+    <script src="/static/js/message.js"></script> <!-- Incluye tu script para mensajes -->
 </body>
 </html>

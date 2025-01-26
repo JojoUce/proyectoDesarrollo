@@ -22,6 +22,7 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 10px;
+    pointer-events: none; /* Esto previene que el contenedor bloquee interacciones */
 }
 
 /* Estilos para los mensajes flash */
@@ -31,15 +32,8 @@ body {
     border-radius: 5px;
     color: white;
     font-size: 14px;
-    animation: slideIn 1s ease-out;
-}
-
-.flash-success {
-    background-color: #28a745; /* Verde para mensajes de éxito */
-}
-
-.flash-danger {
-    background-color: #dc3545; /* Rojo para mensajes de error */
+    animation: slideIn 1s ease-out, fadeOut 3s 2s forwards;
+    pointer-events: auto; /* Esto asegura que el mensaje sea interactivo */
 }
 
 /* Animación para mostrar los mensajes */
@@ -50,6 +44,26 @@ body {
     to {
         transform: translateY(0);
     }
+}
+
+/* Animación para que los mensajes se desvanezcan */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Estilos para los mensajes de éxito */
+.flash-success {
+    background-color: #28a745; /* Verde para mensajes de éxito */
+}
+
+/* Estilos para los mensajes de error */
+.flash-danger {
+    background-color: #dc3545; /* Rojo para mensajes de error */
 }
 
 .login-container {
