@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <!-- Contenedor para mensajes flash temporales -->
     <div id="flash-messages" class="flash-container"></div>
 
     <div class="login-container">
@@ -16,7 +15,6 @@
         <div class="form-container">
             <h2>Iniciar sesión</h2>
             
-            <!-- Formulario de inicio de sesión -->
             <form id="login-form" method="POST">
                 <label for="nombre_usuario">Nombre de usuario</label>
                 <input type="text" id="nombre_usuario" name="nombre_usuario" required>
@@ -31,37 +29,16 @@
         </div>
     </div>
 
-    <!-- Script para manejar mensajes flash temporales -->
-    <script>
-        // Función para mostrar mensajes flash
-        function showFlashMessage(message, category) {
-            const flashContainer = document.getElementById('flash-messages');
-            const messageElement = document.createElement('div');
-            messageElement.className = `flash-message flash-${category}`;
-            messageElement.textContent = message;
-            flashContainer.appendChild(messageElement);
-
-            // Eliminar el mensaje después de 3 segundos
-            setTimeout(() => {
-                messageElement.remove();
-            }, 3000);
-        }
-
-        // Obtener mensajes flash del backend
-        const flashMessages = [
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        { message: "{{ message }}", category: "{{ category }}" },
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        ];
-
-        // Mostrar cada mensaje
-        flashMessages.forEach(({ message, category }) => {
-            showFlashMessage(message, category);
-        });
-    </script>
+    <div id="flash-messages" class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
 </body>
 </html>

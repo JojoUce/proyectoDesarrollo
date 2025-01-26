@@ -334,3 +334,72 @@ html, body {
     font-size: 16px;
     color: #333;
 }
+
+/* Usando 'body-2' para evitar interferencias con el estilo global */
+.body-2 {
+    background-image: none;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.flash-container-2 {
+    margin: 20px;
+    text-align: center;
+}
+
+/* Estilos del formulario */
+.perfil-form-2 {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 40px auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+}
+
+.perfil-form-2 h2 {
+    margin-bottom: 20px;
+}
+
+.form-group-2 {
+    margin-bottom: 15px;
+    text-align: center;  /* Centra los cuadros de entrada */
+}
+
+.form-group-2 label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.form-group-2 input {
+    width: 60%;  /* Ajusta el tamaño de los cuadros de entrada */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.form-group-2 input:focus {
+    border-color: #4CAF50;
+}
+
+.btn-2 {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.btn-2:hover {
+    background-color: #45a049;
+}

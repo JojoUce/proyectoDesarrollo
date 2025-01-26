@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido</title>
+    <title>Perfil</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+
 </head>
 <body >
     <!-- Navbar -->
@@ -12,7 +13,7 @@
         <div class="navbar-container">
             <h1 class="navbar-logo">Mi Aplicación</h1>
             <div class="navbar-user-info">
-                <span class="user-name">Bienvenido, {{ nombre_usuario }}!</span>
+                <span class="user-name">Bienvenido, {{ usuario.nombre_usuario }}!</span>
                 <div class="dropdown">
                     <button class="dropbtn">Configuración</button>
                     <div class="dropdown-content">
@@ -37,10 +38,32 @@
         {% endwith %}
     </div>
 
-    <!-- Contenido Principal -->
-    <div class="main-content">
-        <h2>Contenido Principal</h2>
-        <p>Aquí va el contenido de la página principal. Este contenido ahora ocupará toda la página.........................................</p>
+    <!-- Formulario para editar perfil -->
+    <div class="perfil-form-2">
+        <h2>Editar Perfil</h2>
+        <form method="POST" action="{{ url_for('bp.perfil') }}">
+            <div class="form-group-2">
+                <label for="nombre_usuario">Nombre de Usuario:</label>
+                <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{ usuario.nombre_usuario }}" required>
+            </div>
+
+            <div class="form-group-2">
+                <label for="correo_electronico">Correo Electrónico:</label>
+                <input type="email" id="correo_electronico" name="correo_electronico" value="{{ usuario.correo_electronico }}" required>
+            </div>
+
+            <div class="form-group-2">
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" name="edad" value="{{ usuario.edad }}" required>
+            </div>
+
+            <div class="form-group-2">
+                <label for="altura">Altura (en cm):</label>
+                <input type="number" id="altura" name="altura" value="{{ usuario.altura }}" required>
+            </div>
+
+            <button type="submit" class="btn-2">Actualizar Perfil</button>
+        </form>
     </div>
 
     <script src="/static/js/message.js"></script> <!-- Incluye tu script para mensajes -->

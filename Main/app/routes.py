@@ -31,7 +31,7 @@ def login():
 
     return render_template('login.html') 
 
-# Ruta de registro (crear cuenta)
+
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -75,8 +75,33 @@ def register():
     return render_template('register.html') 
 
 
+@bp.route('/perfil', methods=['GET', 'POST'])
+@login_required  #
+def perfil():
+    if request.method == 'POST':
+        nombre_usuario = request.form.get('nombre_usuario')
+        correo_electronico = request.form.get('correo_electronico')
+        edad = request.form.get('edad')
+        altura = request.form.get('altura')
+
+  
+        current_user.nombre_usuario = nombre_usuario
+        current_user.correo_electronico = correo_electronico
+        current_user.edad = edad
+        current_user.altura = altura
+
+      
+        db.session.commit()
+
+        flash('Perfil actualizado con éxito', 'success')
+
+      
+        return redirect(url_for('bp.perfil'))
+
+    return render_template('perfil.html', usuario=current_user) 
+
 @bp.route('/logout')
-@login_required  # Solo los usuarios autenticados pueden cerrar sesión
+@login_required 
 def logout():
     logout_user() 
     flash('Has cerrado sesión con éxito', 'success')
