@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1 class="navbar-logo">Mi Aplicación</h1>
+            <div class="navbar-user-info">
+                <span class="user-name">Bienvenido, {{ nombre_usuario }}!</span>
+                <div class="dropdown">
+                    <button class="dropbtn">Configuración</button>
+                    <div class="dropdown-content">
+                        <a href="#">Perfil</a>
+                        <a href="{{ url_for('bp.logout') }}">Cerrar sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+        <h2>Contenido Principal</h2>
+        <p>Aquí va el contenido de la página principal. Este contenido ahora ocupará toda la página.........................................</p>
+    </div>
+</body>
+</html>

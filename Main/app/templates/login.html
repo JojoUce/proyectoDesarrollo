@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="/static/img/imagen_pollo_login.jpg" alt="Imagen de Pollo">
+        
+        <div class="form-container">
+            <h2>Iniciar sesión</h2>
+            
+            <!-- Mostrar mensajes flash aquí -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert">
+                        {% for category, message in messages %}
+                            <div class="alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label for="nombre_usuario">Nombre de usuario</label>
+                <input type="text" id="nombre_usuario" name="nombre_usuario" required>
+
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+
+                <button type="submit">Iniciar sesión</button>
+            </form>
+            
+            <p class="register-link">¿No tienes una cuenta? <a href="{{ url_for('bp.register') }}">Crear cuenta</a></p>
+        </div>
+    </div>
+</body>
+</html>

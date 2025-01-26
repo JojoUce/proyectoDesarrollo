@@ -1,0 +1,281 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/static/img/imagen_comida_login.jpg');
+    background-size: cover;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 1000px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-container img {
+    width: 50%;
+    height: auto;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.form-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el formulario horizontalmente */
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #333;
+    display: block;
+}
+
+input {
+    padding: 12px;
+    margin-bottom: 15px;
+    width: 100%; /* Hace que ocupe todo el ancho del contenedor */
+    max-width: 400px; /* Establece un ancho máximo */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Asegura que el padding no incremente el ancho */
+    margin-left: auto;
+    margin-right: auto; /* Centra los campos de texto */
+}
+
+input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+button {
+    padding: 12px;
+    background-color: #007BFF; /* Color azul */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 400px; /* Establece el mismo ancho máximo para el botón */
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto; /* Centra el botón */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-link a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+/* Contenedor de la imagen */
+.login-container img,
+.register-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Contenedor del formulario */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para los inputs y botones */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Enlace de registro */
+.register-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+/* Reset de márgenes y padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%; /* Aseguramos que la página ocupe toda la altura */
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Fondo claro, sin imagen de fondo */
+}
+
+/* Navbar Estilo */
+.navbar {
+    background-color: #0066cc;  /* Azul similar al del login */
+    padding: 12px 20px;  /* Espaciado adecuado */
+    position: fixed;  /* Fijo en la parte superior */
+    width: 100%;  /* Ocupa todo el ancho */
+    top: 0;  /* Pegado al tope */
+    z-index: 1000;  /* Asegura que esté encima de otros elementos */
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Logo en el navbar */
+.navbar-logo {
+    font-size: 20px;  /* Tamaño de letra más pequeño */
+    color: white;
+    font-weight: bold;
+}
+
+/* Información del usuario en el navbar */
+.navbar-user-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Nombre de usuario */
+.user-name {
+    color: white;
+    font-size: 14px;  /* Reducir tamaño de letra */
+    margin-right: 20px;
+}
+
+/* Dropdown para configuración */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    padding: 8px 12px;  /* Tamaño del botón reducido */
+    font-size: 14px;  /* Reducir tamaño de letra */
+    cursor: pointer;
+}
+
+.dropbtn:hover {
+    background-color: #004d99;  /* Cambiar color en hover */
+}
+
+/* Contenido del dropdown */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #0066cc;
+    min-width: 160px;
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #004d99;
+}
+
+/* Contenido Principal */
+.main-content {
+    padding: 20px;
+    background-color: white;
+    margin-top: 80px;  /* Asegura que el contenido no quede debajo del navbar */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 80px); /* Asegura que el contenido ocupe toda la altura de la pantalla */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Centra el contenido horizontal y verticalmente */
+}
+
+/* Asegura que el contenido ocupe todo el espacio, con una distribución más centrada */
+.main-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.main-content p {
+    font-size: 16px;
+    color: #333;
+}
