@@ -8,6 +8,47 @@
     <link rel="stylesheet" href="/static/css/styles2.css">
     <!-- Vincular Font Awesome para los íconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Estilos personalizados para el historial -->
+    <style>
+        .recetas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        .receta-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .receta-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .receta-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .receta-card p {
+            color: #666;
+        }
+        .receta-card .fecha {
+            font-size: 0.9em;
+            color: #888;
+        }
+        .receta-card .ingredientes {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .receta-card .ingredientes ul {
+            padding-left: 20px;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar de navegación -->
@@ -67,18 +108,27 @@
         <!-- Contenido Principal -->
         <div class="content-area">
             <h2>Historial de Recetas</h2>
-            {% if recetas %}
-                <ul>
+            <div class="recetas-container">
+                {% if recetas %}
                     {% for receta in recetas %}
-                        <li>
-                            <strong>{{ receta.titulo }}</strong> - {{ receta.fecha }}<br>
-                            {{ receta.descripcion }}
-                        </li>
+                        <div class="receta-card">
+                            <h3>{{ receta.titulo }}</h3>
+                            <p>{{ receta.descripcion }}</p>
+                            <div class="fecha">Creada el: {{ receta.fecha }}</div>
+                            <div class="ingredientes">
+                                <strong>Ingredientes:</strong>
+                                <ul>
+                                    {% for ingrediente in receta.ingredientes %}
+                                        <li>{{ ingrediente.nombre }} - {{ ingrediente.cantidad }} {{ ingrediente.unidad }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                     {% endfor %}
-                </ul>
-            {% else %}
-                <p>No hay recetas en tu historial.</p>
-            {% endif %}
+                {% else %}
+                    <p>No hay recetas en tu historial.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 
