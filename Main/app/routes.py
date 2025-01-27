@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
-from .models import MetricasUsuario, Usuario
+from .models import MetricasUsuario, Receta, Usuario
 from flask_login import login_user, login_required, current_user, logout_user
 import pandas as pd
 import plotly.express as px
@@ -128,6 +128,24 @@ def logout():
     logout_user() 
     flash('Has cerrado sesión con éxito', 'success')
     return redirect(url_for('bp.login')) 
+
+
+@bp.route('/historial')
+@login_required
+def historial():
+    # Obtener todas las recetas de la base de datos
+    recetas = Receta.query.filter_by(creado_por=current_user.id).all()
+    
+    # Crear una lista de diccionarios con la información de las recetas
+    recetas_data = []
+    for receta in recetas:
+        recetas_data.append({
+            "titulo": receta.titulo,
+            "descripcion": receta.descripcion,
+            "fecha": receta.creado_en.strftime("%Y-%m-%d")  # Formatear la fecha
+        })
+    
+    return render_template('historial.html', recetas=recetas_data, nombre_usuario=current_user.nombre_usuario)
 
 
 def init_routes(app):
