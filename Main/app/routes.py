@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
-from .models import Usuario
+from .models import MetricasUsuario, Usuario
 from flask_login import login_user, login_required, current_user, logout_user
+import pandas as pd
+import plotly.express as px
 
 
 bp = Blueprint('bp', __name__)
@@ -99,6 +101,26 @@ def perfil():
         return redirect(url_for('bp.perfil'))
 
     return render_template('perfil.html', usuario=current_user) 
+
+@bp.route('/tablas', methods=['GET'])
+@login_required
+def tablas():
+    # Importa el modelo en la ruta
+    from .models import MetricasUsuario
+    
+    # Recupera las métricas del usuario actual
+    metricas = MetricasUsuario.query.filter_by(usuario_id=current_user.id).all()
+    
+    # Si no hay métricas, puedes retornar un mensaje de advertencia
+    if not metricas:
+        flash('No se encontraron métricas para este usuario.', 'warning')
+    
+    # Crea una lista con las métricas que quieres graficar
+    metricas_data = [{"nombre": m.nombre_metrica, "valor": m.valor_metrica} for m in metricas]
+    
+    # Pasa las métricas al template
+    return render_template('tablas.html', metricas=metricas_data)
+
 
 @bp.route('/logout')
 @login_required 

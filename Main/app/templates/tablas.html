@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos de Métricas</title>
+
+    <!-- Incluir Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Métricas del Usuario</h1>
+    
+    <!-- Mostramos el gráfico -->
+    <canvas id="metricasChart" width="400" height="400"></canvas>
+    
+    <script>
+        // Verifica si tienes datos antes de renderizar el gráfico
+        const metricas = {{ metricas|tojson }};  // Usamos Jinja2 para pasar los datos al JS
+
+        // Si hay datos, los procesamos
+        if (metricas.length > 0) {
+            const labels = metricas.map(m => m.nombre);  // Extraemos los nombres de las métricas
+            const data = metricas.map(m => m.valor);    // Extraemos los valores de las métricas
+
+            const ctx = document.getElementById('metricasChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',  // Tipo de gráfico (bar, line, etc.)
+                data: {
+                    labels: labels,  // Nombres de las métricas
+                    datasets: [{
+                        label: 'Valor de las Métricas',
+                        data: data,  // Los valores de las métricas
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',  // Color del gráfico
+                        borderColor: 'rgba(54, 162, 235, 1)',        // Color del borde
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        } else {
+            alert("No hay datos para mostrar.");
+        }
+    </script>
+</body>
+</html>
