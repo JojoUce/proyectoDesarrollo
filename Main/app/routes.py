@@ -105,22 +105,35 @@ def perfil():
 @bp.route('/tablas', methods=['GET'])
 @login_required
 def tablas():
-    # Importa el modelo en la ruta
+    # Importa el modelo de métricas
     from .models import MetricasUsuario
     
-    # Recupera las métricas del usuario actual
-    metricas = MetricasUsuario.query.filter_by(usuario_id=current_user.id).all()
+    # Lista de métricas específicas que quieres graficar
+    metricas_especificas = [
+        "Pasos diarios",
+        "Calorías quemadas",
+        "Configuraciones activas",
+        "Búsquedas realizadas"
+    ]
     
-    # Si no hay métricas, puedes retornar un mensaje de advertencia
-    if not metricas:
-        flash('No se encontraron métricas para este usuario.', 'warning')
-    
-    # Crea una lista con las métricas que quieres graficar
-    metricas_data = [{"nombre": m.nombre_metrica, "valor": m.valor_metrica} for m in metricas]
-    
-    # Pasa las métricas al template
-    return render_template('tablas.html', metricas=metricas_data)
+    # Filtra las métricas basándote en el nombre de la métrica y el usuario actual
+    metricas = MetricasUsuario.query.filter(
+        MetricasUsuario.usuario_id == current_user.id,
+        MetricasUsuario.nombre_metrica.in_(metricas_especificas)
+    ).all()
 
+    # Dividir las métricas en categorías individuales
+    pasos_diarios = [m.valor_metrica for m in metricas if m.nombre_metrica == "Pasos diarios"]
+    calorias_quemadas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Calorías quemadas"]
+    configuraciones_activas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Configuraciones activas"]
+    busquedas_realizadas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Búsquedas realizadas"]
+
+    # Enviar datos a la plantilla
+    return render_template('tablas.html', 
+                           pasos_diarios=pasos_diarios,
+                           calorias_quemadas=calorias_quemadas,
+                           configuraciones_activas=configuraciones_activas,
+                           busquedas_realizadas=busquedas_realizadas)
 
 @bp.route('/logout')
 @login_required 
