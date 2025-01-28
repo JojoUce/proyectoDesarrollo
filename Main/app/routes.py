@@ -2,8 +2,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
 from .models import MetricasUsuario, Receta, Usuario
 from flask_login import login_user, login_required, current_user, logout_user
-import pandas as pd
-import plotly.express as px
 
 
 bp = Blueprint('bp', __name__)
@@ -78,7 +76,7 @@ def register():
 
 
 @bp.route('/perfil', methods=['GET', 'POST'])
-@login_required  #
+@login_required  
 def perfil():
     if request.method == 'POST':
         nombre_usuario = request.form.get('nombre_usuario')
