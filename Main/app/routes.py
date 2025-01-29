@@ -1,10 +1,9 @@
-import datetime
-from uuid import uuid4
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
-from .models import MetricasUsuario, Receta, Usuario
+from .models import MetricasUsuario, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
 from flask_login import login_user, login_required, current_user, logout_user
-from datetime import datetime
+import pandas as pd
+import plotly.express as px
 
 
 bp = Blueprint('bp', __name__)
@@ -79,7 +78,7 @@ def register():
 
 
 @bp.route('/perfil', methods=['GET', 'POST'])
-@login_required  
+@login_required  #
 def perfil():
     if request.method == 'POST':
         nombre_usuario = request.form.get('nombre_usuario')
@@ -143,7 +142,6 @@ def logout():
     flash('Has cerrado sesión con éxito', 'success')
     return redirect(url_for('bp.login')) 
 
-
 @bp.route('/historial')
 @login_required
 def historial():
@@ -161,26 +159,37 @@ def historial():
     
     return render_template('historial.html', recetas=recetas_data, nombre_usuario=current_user.nombre_usuario)
 
-@bp.route('/agregar_metricas', methods=['GET', 'POST'])
+@bp.route('/restricciones', methods=['GET', 'POST'])
 @login_required
-def agregar_metricas():
+def restricciones():
+    # Si el método es POST, agregar la nueva restricción dietética
     if request.method == 'POST':
-        usuario_id = current_user.id
-        selected_metric = request.form.get('selectedMetric')
-        metric_value = request.form.get('metricValue', type=int)
+        nombre_restriccion = request.form.get('nombre_restriccion')
+        descripcion = request.form.get('descripcion')
 
-        if selected_metric and metric_value is not None:
-            nueva_metrica = MetricasUsuario(
-                usuario_id=usuario_id,
-                nombre_metrica=selected_metric,
-                valor_metrica=metric_value
-            )
-            db.session.add(nueva_metrica)
+        # Verificar que el nombre de la restricción no esté vacío
+        if nombre_restriccion:
+            # Crear una nueva restricción dietética
+            nueva_restriccion = RestriccionDietetica(nombre=nombre_restriccion, descripcion=descripcion)
+            db.session.add(nueva_restriccion)
             db.session.commit()
-            flash(f'Métrica {selected_metric} creada correctamente', 'success')
+
+            # Asociar la restricción dietética con el usuario logueado
+            usuario_restriccion = UsuarioRestriccion(usuario_id=current_user.id, restriccion_id=nueva_restriccion.id)
+            db.session.add(usuario_restriccion)
+            db.session.commit()
+
+            flash('Restricción dietética añadida exitosamente!', 'success')
         else:
-            flash('Por favor selecciona una métrica y agrega un valor.', 'danger')
-        return redirect(url_for('bp.agregar_metricas'))
+            flash('El nombre de la restricción es obligatorio', 'danger')
+
+    # Obtener las restricciones dietéticas asociadas al usuario logueado
+    restricciones_usuario = db.session.query(UsuarioRestriccion).join(RestriccionDietetica).filter(UsuarioRestriccion.usuario_id == current_user.id).all()
+
+    return render_template('restricciones.html', restricciones=restricciones_usuario)
+
+@bp.route('/agregar_metricas')
+def agregar_metricas():
     return render_template('agregar_metricas.html')
 
 def init_routes(app):
