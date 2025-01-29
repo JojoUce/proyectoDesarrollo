@@ -1,7 +1,10 @@
+import datetime
+from uuid import uuid4
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
 from .models import MetricasUsuario, Receta, Usuario
 from flask_login import login_user, login_required, current_user, logout_user
+from datetime import datetime
 
 
 bp = Blueprint('bp', __name__)
@@ -158,6 +161,27 @@ def historial():
     
     return render_template('historial.html', recetas=recetas_data, nombre_usuario=current_user.nombre_usuario)
 
+@bp.route('/agregar_metricas', methods=['GET', 'POST'])
+@login_required
+def agregar_metricas():
+    if request.method == 'POST':
+        usuario_id = current_user.id
+        selected_metric = request.form.get('selectedMetric')
+        metric_value = request.form.get('metricValue', type=int)
+
+        if selected_metric and metric_value is not None:
+            nueva_metrica = MetricasUsuario(
+                usuario_id=usuario_id,
+                nombre_metrica=selected_metric,
+                valor_metrica=metric_value
+            )
+            db.session.add(nueva_metrica)
+            db.session.commit()
+            flash(f'Métrica {selected_metric} creada correctamente', 'success')
+        else:
+            flash('Por favor selecciona una métrica y agrega un valor.', 'danger')
+        return redirect(url_for('bp.agregar_metricas'))
+    return render_template('agregar_metricas.html')
 
 def init_routes(app):
     app.register_blueprint(bp) 
