@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="register-container">
+        <div class="top-image-container">
+            <img class="top-image" src="/static/img/imagen_pollo_login.jpg" alt="Imagen de Pollo">
+        </div>
+
+        <div class="form-container">
+            <h2>Crear cuenta</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert">
+                        {% for category, message in messages %}
+                            <div class="alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label for="nombre_usuario">Nombre de usuario</label>
+                <input type="text" id="nombre_usuario" name="nombre_usuario" required>
+
+                <label for="correo_electronico">Correo electrónico</label>
+                <input type="email" id="correo_electronico" name="correo_electronico" required>
+
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+
+                <label for="confirm_contrasena">Confirmar Contraseña</label>
+                <input type="password" id="confirm_contrasena" name="confirm_contrasena" required>
+
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" name="edad" required>
+
+                <label for="altura">Altura</label>
+                <input type="number" id="altura" name="altura" required>
+
+                <button type="submit">Crear cuenta</button>
+            </form>
+
+            <p class="login-link">¿Ya tienes una cuenta? <a href="{{ url_for('bp.login') }}">Iniciar sesión</a></p>
+        </div>
+
+        <div class="bottom-image-container">
+            <img class="bottom-image" src="/static/img/imagen_pollo_login.jpg" alt="Imagen de Pollo">
+        </div>
+    </div>
+</body>
+</html>
