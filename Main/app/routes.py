@@ -1,9 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from dotenv import load_dotenv
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from . import db
 from .models import MetricasUsuario, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
 from flask_login import login_user, login_required, current_user, logout_user
 import pandas as pd
 import plotly.express as px
+from groq import Groq
+
+# Cargar variables de entorno (incluye la clave de API de Groq)
+load_dotenv()
+
+# Inicializar el cliente de Groq
+qclient = Groq()
 
 
 bp = Blueprint('bp', __name__)
@@ -105,35 +113,44 @@ def perfil():
 @bp.route('/tablas', methods=['GET'])
 @login_required
 def tablas():
-    # Importa el modelo de métricas
     from .models import MetricasUsuario
-    
-    # Lista de métricas específicas que quieres graficar
+
+    # Definimos las métricas que vamos a consultar
     metricas_especificas = [
         "Pasos diarios",
         "Calorías quemadas",
         "Configuraciones activas",
         "Búsquedas realizadas"
     ]
-    
-    # Filtra las métricas basándote en el nombre de la métrica y el usuario actual
-    metricas = MetricasUsuario.query.filter(
-        MetricasUsuario.usuario_id == current_user.id,
-        MetricasUsuario.nombre_metrica.in_(metricas_especificas)
-    ).all()
 
-    # Dividir las métricas en categorías individuales
-    pasos_diarios = [m.valor_metrica for m in metricas if m.nombre_metrica == "Pasos diarios"]
-    calorias_quemadas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Calorías quemadas"]
-    configuraciones_activas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Configuraciones activas"]
-    busquedas_realizadas = [m.valor_metrica for m in metricas if m.nombre_metrica == "Búsquedas realizadas"]
+    # Usamos un diccionario para guardar los resultados de cada métrica
+    resultados_metricas = {}
 
-    # Enviar datos a la plantilla
+    # Realizamos la consulta por cada tipo de métrica
+    for metrica in metricas_especificas:
+        resultados_metricas[metrica] = (
+            MetricasUsuario.query
+            .filter(MetricasUsuario.usuario_id == current_user.id, MetricasUsuario.nombre_metrica == metrica)
+            .order_by(MetricasUsuario.actualizado_en.desc())  # Ordenamos por la fecha de actualización (más reciente primero)
+            .limit(5)  # Limite de 5 resultados
+            .all()
+        )
+
+    # Extraemos los valores de cada métrica
+    pasos_diarios_values = [m.valor_metrica for m in resultados_metricas["Pasos diarios"]]
+    calorias_quemadas_values = [m.valor_metrica for m in resultados_metricas["Calorías quemadas"]]
+    configuraciones_activas_values = [m.valor_metrica for m in resultados_metricas["Configuraciones activas"]]
+    busquedas_realizadas_values = [m.valor_metrica for m in resultados_metricas["Búsquedas realizadas"]]
+
+    # Pasamos los datos a la plantilla
     return render_template('tablas.html', 
-                           pasos_diarios=pasos_diarios,
-                           calorias_quemadas=calorias_quemadas,
-                           configuraciones_activas=configuraciones_activas,
-                           busquedas_realizadas=busquedas_realizadas)
+                           pasos_diarios=pasos_diarios_values,
+                           calorias_quemadas=calorias_quemadas_values,
+                           configuraciones_activas=configuraciones_activas_values,
+                           busquedas_realizadas=busquedas_realizadas_values)
+
+
+
 
 @bp.route('/logout')
 @login_required 
@@ -188,9 +205,103 @@ def restricciones():
 
     return render_template('restricciones.html', restricciones=restricciones_usuario)
 
-@bp.route('/agregar_metricas')
+@bp.route('/agregar_metricas', methods=['GET', 'POST'])
+@login_required
 def agregar_metricas():
+    if request.method == 'POST':
+        usuario_id = current_user.id
+        
+        # Obtener los valores del formulario
+        nombre_metrica = request.form.get('selectedMetric')
+        valor_metrica = request.form.get('metricValue', type=int)
+
+        # Asegúrate de que los datos se reciban correctamente
+        print(f"Nombre Métrica: {nombre_metrica}, Valor Métrica: {valor_metrica}")
+
+        if nombre_metrica and valor_metrica is not None:
+            nueva_metrica = MetricasUsuario(
+                usuario_id=usuario_id,
+                nombre_metrica=nombre_metrica,
+                valor_metrica=valor_metrica
+            )
+            db.session.add(nueva_metrica)
+            db.session.commit()
+            flash('Métrica guardada correctamente', 'success')
+        else:
+            flash('Error al guardar la métrica', 'danger')
+
+        return redirect(url_for('bp.agregar_metricas'))
+
     return render_template('agregar_metricas.html')
+
+
+
+
+
+
+@bp.route('/generar_receta', methods=['GET', 'POST'])
+@login_required
+def generar_receta():
+    receta = None  # Inicializar la variable de receta
+    restricciones = []  # Inicializar las restricciones vacías
+
+    # Obtener las restricciones de la base de datos asociadas al usuario logueado
+    restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(UsuarioRestriccion.usuario_id == current_user.id).all()
+    for restriccion in restricciones_db:
+        restricciones.append(restriccion.nombre)  # Ajusta según el campo de nombre de la restricción
+
+    if request.method == 'POST':
+        # Obtener los ingredientes del formulario
+        ingredientes = request.form.getlist('ingredientes')  # Lista de ingredientes seleccionados
+
+        # Crear el prompt para la API de Groq
+        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}."
+
+        # Realizar la solicitud a la API de Groq
+        try:
+            stream_response = qclient.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "Solo generar recetas en español."},
+                    {"role": "user", "content": prompt},
+                ],
+                model="llama3-8b-8192",  # Puedes usar el modelo que prefieras
+                stream=True
+            )
+
+            # Procesar la respuesta de la API y formatear el contenido
+            response = ''
+            for chunk in stream_response:
+                if chunk.choices[0].delta.content:
+                    response += chunk.choices[0].delta.content
+            
+            # Formatear la respuesta para el HTML
+            receta = format_receta(response)
+
+        except Exception as e:
+            # En caso de error, asignar el mensaje de error a receta
+            receta = f"<p><strong>Error:</strong> {str(e)}</p>"
+
+    # Aquí no usamos un return render_template, solo devolvemos la misma página
+    return render_template('generar_receta.html', receta=receta, restricciones=restricciones)
+
+def format_receta(response):
+    # Formatear la receta, eliminando los espacios adicionales
+    response = response.replace('\n', '<br>')  # Reemplazar saltos de línea por <br>
+    response = response.replace('*', '<li>')  # Convertir a lista <li> (si es necesario)
+    
+    # Asegúrate de que los ingredientes no tengan espacios innecesarios
+    response = response.replace('  ', ' ')  # Reemplazar dobles espacios por un solo espacio
+
+    # Asegúrate de envolver la respuesta en una estructura HTML
+    receta_formateada = f'<div class="receta-container"><p>{response}</p></div>'
+    
+    return receta_formateada
+
+
+
+
+
+
 
 def init_routes(app):
     app.register_blueprint(bp) 

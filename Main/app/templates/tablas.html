@@ -117,13 +117,14 @@
             const caloriasQuemadas = {{ calorias_quemadas | tojson }};
             const configuracionesActivas = {{ configuraciones_activas | tojson }};
             const busquedasRealizadas = {{ busquedas_realizadas | tojson }};
+            
     
             // Gráfico Pasos Diarios
             const ctxPasos = document.getElementById('graficoPasos').getContext('2d');
             new Chart(ctxPasos, {
                 type: 'line',
                 data: {
-                    labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+                    labels: ['1', '2', '3', '4', '5'],
                     datasets: [{
                         label: 'Pasos Diarios',
                         data: pasosDiarios,
