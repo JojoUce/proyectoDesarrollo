@@ -1,0 +1,123 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 20px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.sidebar-header {
+    text-align: center;
+    font-size: 1.5rem;
+    padding-bottom: 20px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #495057;
+}
+
+.sidebar-menu li i {
+    margin-right: 10px;
+}
+
+.sidebar-menu li a {
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-menu li a:hover {
+    color: #007bff;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.toggle-btn {
+    font-size: 30px;
+    color: white;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    z-index: 1;
+}
+
+.navbar-user-info {
+    display: flex;
+    align-items: center;
+}
+
+/* Contenedor de mensajes flash */
+.flash-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    pointer-events: none; /* Esto previene que el contenedor bloquee interacciones */
+}
+
+/* Estilos para los mensajes flash */
+.flash-message {
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    animation: slideIn 1s ease-out, fadeOut 3s 2s forwards;
+    pointer-events: auto; /* Esto asegura que el mensaje sea interactivo */
+}
+
+/* Animación para mostrar los mensajes */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Animación para que los mensajes se desvanezcan */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Estilos para los mensajes de éxito */
+.flash-success {
+    background-color: #28a745; /* Verde para mensajes de éxito */
+}
+
+/* Estilos para los mensajes de error */
+.flash-danger {
+    background-color: #dc3545; /* Rojo para mensajes de error */
+}
+
+.carousel-inner img {
+    width: 100%; 
+    height: auto;
+    max-height: 320px; 
+    object-fit: cover;
+}
