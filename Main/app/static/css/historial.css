@@ -1,0 +1,74 @@
+/* Estilo para la barra lateral */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+}
+
+.sidebar-header {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin: 15px 0;
+}
+
+.sidebar-menu li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.sidebar-menu li i {
+    margin-right: 10px;
+}
+
+.sidebar-menu li:hover {
+    background-color: #34495e;
+}
+
+/* Estilo para el contenido principal */
+.main-content {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+.navbar-search input {
+    width: 200px;
+    padding: 5px;
+}
+
+.navbar-search button {
+    padding: 5px 10px;
+    margin-left: 5px;
+}
+
+.navbar-user-info .dropdown-menu {
+    right: 0;
+}
+
+.flash-container .flash-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.flash-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.flash-error {
+    background-color: #dc3545;
+}
