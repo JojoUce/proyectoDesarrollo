@@ -1,3 +1,4 @@
+import re
 from dotenv import load_dotenv
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from . import db
@@ -6,6 +7,7 @@ from flask_login import login_user, login_required, current_user, logout_user
 import pandas as pd
 import plotly.express as px
 from groq import Groq
+import openai
 
 # Cargar variables de entorno (incluye la clave de API de Groq)
 load_dotenv()
@@ -239,66 +241,88 @@ def agregar_metricas():
 
 
 
+
 @bp.route('/generar_receta', methods=['GET', 'POST'])
 @login_required
 def generar_receta():
-    receta = None  # Inicializar la variable de receta
-    restricciones = []  # Inicializar las restricciones vacías
+    receta = None
+    imagen_url = None
+    restricciones = []
 
-    # Obtener las restricciones de la base de datos asociadas al usuario logueado
-    restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(UsuarioRestriccion.usuario_id == current_user.id).all()
+    restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(
+        UsuarioRestriccion.usuario_id == current_user.id
+    ).all()
+
     for restriccion in restricciones_db:
-        restricciones.append(restriccion.nombre)  # Ajusta según el campo de nombre de la restricción
+        restricciones.append(restriccion.nombre)
 
     if request.method == 'POST':
-        # Obtener los ingredientes del formulario
-        ingredientes = request.form.getlist('ingredientes')  # Lista de ingredientes seleccionados
+        ingredientes = request.form.getlist('ingredientes')
 
-        # Crear el prompt para la API de Groq
-        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}."
+        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}, finalmente me pones el nombre de la receta entre comillas y no le pongas en negrillas, todo esto en Español"
 
-        # Realizar la solicitud a la API de Groq
         try:
             stream_response = qclient.chat.completions.create(
                 messages=[
                     {"role": "system", "content": "Solo generar recetas en español."},
                     {"role": "user", "content": prompt},
                 ],
-                model="llama3-8b-8192",  # Puedes usar el modelo que prefieras
+                model="llama3-8b-8192",
                 stream=True
             )
 
-            # Procesar la respuesta de la API y formatear el contenido
             response = ''
             for chunk in stream_response:
                 if chunk.choices[0].delta.content:
                     response += chunk.choices[0].delta.content
-            
-            # Formatear la respuesta para el HTML
+
             receta = format_receta(response)
 
+            # Extraer el nombre de la receta (lo que está entre comillas)
+            nombre_receta = extraer_nombre_receta(response)
+
+            if nombre_receta:
+                imagen_url = generar_imagen_dalle(nombre_receta)
+
         except Exception as e:
-            # En caso de error, asignar el mensaje de error a receta
             receta = f"<p><strong>Error:</strong> {str(e)}</p>"
 
-    # Aquí no usamos un return render_template, solo devolvemos la misma página
-    return render_template('generar_receta.html', receta=receta, restricciones=restricciones)
+    return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url)
 
 def format_receta(response):
-    # Formatear la receta, eliminando los espacios adicionales
-    response = response.replace('\n', '<br>')  # Reemplazar saltos de línea por <br>
-    response = response.replace('*', '<li>')  # Convertir a lista <li> (si es necesario)
-    
-    # Asegúrate de que los ingredientes no tengan espacios innecesarios
-    response = response.replace('  ', ' ')  # Reemplazar dobles espacios por un solo espacio
-
-    # Asegúrate de envolver la respuesta en una estructura HTML
+    response = response.replace('\n', '<br>')
+    response = response.replace('*', '<li>')
+    response = response.replace('  ', ' ')
     receta_formateada = f'<div class="receta-container"><p>{response}</p></div>'
     
     return receta_formateada
 
+def extraer_nombre_receta(response):
+    """
+    Extrae el nombre de la receta desde la respuesta de Groq (lo que está entre comillas).
+    """
+    match = re.search(r'"([^"]+)"', response)  # Buscar el texto entre comillas
+    return match.group(1) if match else None
 
+def generar_imagen_dalle(nombre_receta):
+    """
+    Utiliza el nombre de la receta para generar la imagen en DALL·E.
+    """
+    try:
 
+        # Llamada para generar la imagen en DALL·E
+        response = openai.Image.create(
+            prompt=f"Imagen detallada de un plato gourmet llamado '{nombre_receta}', presentando los ingredientes mencionados.",
+            n=1,
+            size="1024x1024"
+        )
+
+        imagen_url = response['data'][0]['url']
+        return imagen_url
+
+    except Exception as e:
+        print(f"Error generando la imagen: {e}")
+        return None
 
 
 
