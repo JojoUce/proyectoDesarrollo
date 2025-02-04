@@ -9,7 +9,7 @@ body {
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background-color: #3498db; /* Azul */
+    background-color: #287B4F; /* Verde */
     color: white;
     height: 100vh;
     padding-top: 20px;
@@ -41,7 +41,7 @@ body {
 .sidebar-menu li {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #2980b9;
+    border-bottom: 1px solid #287B4F;
     display: flex;
     align-items: center;
     transition: background-color 0.3s ease;
@@ -57,7 +57,7 @@ body {
 }
 
 .sidebar-menu li:hover {
-    background-color: #2980b9;
+    background-color: #287B4F;
 }
 
 .sidebar-menu li i {
@@ -114,7 +114,7 @@ body {
 }
 
 .search-button {
-    background-color: #3498db;
+    background-color: #ED801B;
     color: white;
     border: none;
     padding: 10px 15px;

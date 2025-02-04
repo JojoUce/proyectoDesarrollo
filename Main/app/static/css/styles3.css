@@ -12,7 +12,7 @@ body {
     left: 0;
     height: 100%;
     width: 250px;
-    background-color: #343a40;
+    background-color: #287B4F;
     padding-top: 20px;
     color: white;
     transition: all 0.3s ease;
@@ -32,7 +32,7 @@ body {
 
 .sidebar-menu li {
     padding: 10px;
-    border-bottom: 1px solid #495057;
+    border-bottom: 1px solid #308256;
 }
 
 .sidebar-menu li i {
@@ -58,7 +58,7 @@ body {
 /* Botón de alternancia */
 .toggle-btn {
     font-size: 30px;
-    color: white;
+    color: #ED801B; /*white*/
     background-color: transparent;
     border: none;
     position: absolute;
@@ -171,8 +171,8 @@ body {
     padding: 12px 24px;
     border-radius: 25px;
     width: 100%;
-    background-color: #007bff;
-    border: 2px solid #007bff;
+    background-color: #287B4F;
+    border: 2px solid #287B4F;
     transition: all 0.3s ease;
 }
 
