@@ -1,3 +1,11 @@
+/* Estilos generales */
+body {
+    background: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px; /* Tamaño base de la fuente */
+}
+
+/* Sidebar */
 .sidebar {
     position: fixed;
     top: 0;
@@ -8,6 +16,7 @@
     padding-top: 20px;
     color: white;
     transition: all 0.3s ease;
+    font-size: 16px; /* Aseguramos que el tamaño de la fuente sea consistente */
 }
 
 .sidebar-header {
@@ -33,17 +42,20 @@
 .sidebar-menu li a {
     color: white;
     text-decoration: none;
+    font-size: 16px; /* Aseguramos que el tamaño de la fuente sea consistente */
 }
 
 .sidebar-menu li a:hover {
     color: #007bff;
 }
 
+/* Estilos para el contenido principal */
 .main-content {
     margin-left: 250px;
     padding: 20px;
 }
 
+/* Botón de alternancia */
 .toggle-btn {
     font-size: 30px;
     color: white;
@@ -55,6 +67,7 @@
     z-index: 1;
 }
 
+/* Contenedor de usuario en la navbar */
 .navbar-user-info {
     display: flex;
     align-items: center;
@@ -71,7 +84,7 @@
     flex-direction: column;
     align-items: center;
     padding: 10px;
-    pointer-events: none; /* Esto previene que el contenedor bloquee interacciones */
+    pointer-events: none;
 }
 
 /* Estilos para los mensajes flash */
@@ -82,7 +95,7 @@
     color: white;
     font-size: 14px;
     animation: slideIn 1s ease-out, fadeOut 3s 2s forwards;
-    pointer-events: auto; /* Esto asegura que el mensaje sea interactivo */
+    pointer-events: auto;
 }
 
 /* Animación para mostrar los mensajes */
@@ -122,14 +135,12 @@
     object-fit: cover;
 }
 
-body2 {
-    background: #f0f2f5;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-/* Container for centering the form and content */
+/* Estilos para contenedor de formulario */
 .container2 {
     margin-top: 40px;
 }
+
+/* Estilos para el contenido principal */
 .main-content2 {
     background-color: #fff;
     padding: 40px;
@@ -137,7 +148,7 @@ body2 {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Form elements */
+/* Estilos de los elementos del formulario */
 .form-group {
     margin-bottom: 20px;
 }
@@ -154,7 +165,7 @@ body2 {
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
 
-/* Buttons */
+/* Botones */
 .btn-primary {
     font-size: 16px;
     padding: 12px 24px;
@@ -171,7 +182,7 @@ body2 {
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
 }
 
-/* Recipe result */
+/* Resultados de receta */
 .receta-generada {
     background-color: #e9ecef;
     margin-top: 30px;
@@ -192,7 +203,7 @@ body2 {
     color: #333;
 }
 
-/* Alerts and flashes */
+/* Estilos para las alertas */
 .flashes {
     list-style-type: none;
     padding: 0;
@@ -225,7 +236,7 @@ body2 {
     font-weight: bold;
 }
 
-/* List of ingredients */
+/* Lista de ingredientes */
 .ingredients-list {
     list-style-type: none;
     padding: 0;
@@ -239,7 +250,7 @@ body2 {
     border-radius: 5px;
 }
 
-/* Animations */
+/* Animaciones */
 @keyframes fadeIn {
     0% {
         opacity: 0;

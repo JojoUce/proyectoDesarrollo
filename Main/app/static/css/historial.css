@@ -5,16 +5,22 @@
     left: 0;
     height: 100%;
     width: 250px;
-    background-color: #2c3e50;
+    background-color: #343a40; /* Cambié el color de fondo */
     color: #fff;
     padding: 20px;
 }
 
 .sidebar-header {
-    font-size: 1.5em;
-    margin-bottom: 20px;
+    text-align: center; /* Centra el texto en la barra lateral */
+    font-weight: bold; /* Hace que el texto sea negrita */
+    font-size: 1.5rem; /* Ajusta el tamaño de la fuente */
+    padding: 20px 0; /* Añade espaciado alrededor del texto (ajustado para mayor espacio) */
+    margin-bottom: 20px; /* Espacio debajo del texto */
+    color: #fff; /* Mantiene el texto blanco */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
 
+/* Resto del estilo para el menú */
 .sidebar-menu {
     list-style: none;
     padding: 0;
@@ -35,12 +41,12 @@
 }
 
 .sidebar-menu li:hover {
-    background-color: #34495e;
+    background-color: #495057; /* Color de fondo al pasar el mouse */
 }
 
 /* Estilo para el contenido principal */
 .main-content {
-    margin-left: 260px;
+    margin-left: 260px; /* Asegura que el contenido no quede cubierto por la barra lateral */
     padding: 20px;
 }
 
@@ -64,11 +70,13 @@
     border-radius: 5px;
 }
 
+/* Estilos para los mensajes flash */
 .flash-success {
-    background-color: #28a745;
+    background-color: #28a745; /* Verde para mensajes de éxito */
     color: white;
 }
 
 .flash-error {
-    background-color: #dc3545;
+    background-color: #dc3545; /* Rojo para mensajes de error */
+    color: white;
 }
