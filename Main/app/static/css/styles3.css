@@ -46,7 +46,7 @@ body {
 }
 
 .sidebar-menu li a:hover {
-    color: #007bff;
+    color: #ffffff; /* Blanco */ /* Fondo azul */
 }
 
 /* Estilos para el contenido principal */
