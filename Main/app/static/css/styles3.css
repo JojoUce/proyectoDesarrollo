@@ -1,263 +1,64 @@
 /* Estilos generales */
 body {
-    background: #f0f2f5;
+    background: #f5fdf5; /* Verde claro para frescura */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 16px; /* Tamaño base de la fuente */
+    font-size: 16px;
 }
 
 /* Sidebar */
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 250px;
-    background-color: #343a40;
-    padding-top: 20px;
+    background-color: #2a7a4f; /* Verde oscuro para resaltar salud y naturaleza */
     color: white;
-    transition: all 0.3s ease;
-    font-size: 16px; /* Aseguramos que el tamaño de la fuente sea consistente */
-}
-
-.sidebar-header {
-    text-align: center;
-    font-size: 1.5rem;
-    padding-bottom: 20px;
-}
-
-.sidebar-menu {
-    list-style: none;
-    padding-left: 0;
 }
 
 .sidebar-menu li {
-    padding: 10px;
-    border-bottom: 1px solid #495057;
-}
-
-.sidebar-menu li i {
-    margin-right: 10px;
-}
-
-.sidebar-menu li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px; /* Aseguramos que el tamaño de la fuente sea consistente */
+    border-bottom: 1px solid #3b8b5f; /* Verde medio para sutileza */
 }
 
 .sidebar-menu li a:hover {
-    color: #ffffff; /* Blanco */ /* Fondo azul */
-}
-
-/* Estilos para el contenido principal */
-.main-content {
-    margin-left: 250px;
-    padding: 20px;
+    color: #ff8c42; /* Naranja para resaltar interacción */
 }
 
 /* Botón de alternancia */
 .toggle-btn {
-    font-size: 30px;
-    color: white;
-    background-color: transparent;
-    border: none;
-    position: absolute;
-    top: 20px;
-    left: 10px;
-    z-index: 1;
-}
-
-/* Contenedor de usuario en la navbar */
-.navbar-user-info {
-    display: flex;
-    align-items: center;
-}
-
-/* Contenedor de mensajes flash */
-.flash-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    pointer-events: none;
+    color: #ff8c42; /* Naranja vibrante */
 }
 
 /* Estilos para los mensajes flash */
-.flash-message {
-    padding: 10px 20px;
-    margin: 5px 0;
-    border-radius: 5px;
-    color: white;
-    font-size: 14px;
-    animation: slideIn 1s ease-out, fadeOut 3s 2s forwards;
-    pointer-events: auto;
-}
-
-/* Animación para mostrar los mensajes */
-@keyframes slideIn {
-    from {
-        transform: translateY(-100%);
-    }
-    to {
-        transform: translateY(0);
-    }
-}
-
-/* Animación para que los mensajes se desvanezcan */
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-    to {
-        opacity: 0;
-    }
-}
-
-/* Estilos para los mensajes de éxito */
 .flash-success {
-    background-color: #28a745; /* Verde para mensajes de éxito */
+    background-color: #28c76f; /* Verde brillante para éxito */
 }
 
-/* Estilos para los mensajes de error */
 .flash-danger {
-    background-color: #dc3545; /* Rojo para mensajes de error */
-}
-
-.carousel-inner img {
-    width: 100%; 
-    height: auto;
-    max-height: 320px; 
-    object-fit: cover;
-}
-
-/* Estilos para contenedor de formulario */
-.container2 {
-    margin-top: 40px;
-}
-
-/* Estilos para el contenido principal */
-.main-content2 {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* Estilos de los elementos del formulario */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-control {
-    border-radius: 5px;
-    height: 45px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    background-color: #ff4d4d; /* Rojo más suave para errores */
 }
 
 /* Botones */
 .btn-primary {
-    font-size: 16px;
-    padding: 12px 24px;
-    border-radius: 25px;
-    width: 100%;
-    background-color: #007bff;
-    border: 2px solid #007bff;
-    transition: all 0.3s ease;
+    background-color: #007bbf; /* Azul confianza */
+    border: 2px solid #007bbf;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+    background-color: #005a8d; /* Azul más oscuro al pasar el cursor */
+    border-color: #005a8d;
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
 }
 
 /* Resultados de receta */
 .receta-generada {
-    background-color: #e9ecef;
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 1s ease-in-out;
+    background-color: #e3f2fd; /* Azul claro para resaltar la receta */
 }
 
 .receta-generada h3 {
-    font-size: 1.8rem;
-    color: #007bff;
-    font-weight: bold;
+    color: #ff8c42; /* Naranja para títulos llamativos */
 }
 
 .receta-generada p {
-    font-size: 1.1rem;
-    color: #333;
-}
-
-/* Estilos para las alertas */
-.flashes {
-    list-style-type: none;
-    padding: 0;
-}
-
-.flashes li {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-.flashes .success {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.flashes .danger {
-    background-color: #dc3545;
-    color: #fff;
-}
-
-.flashes .warning {
-    background-color: #ffc107;
-    color: #fff;
-}
-
-.receta-title {
-    font-size: 1.8rem;
-    font-weight: bold;
+    color: #2a7a4f; /* Verde para armonía visual */
 }
 
 /* Lista de ingredientes */
-.ingredients-list {
-    list-style-type: none;
-    padding: 0;
-    margin-top: 10px;
-}
-
 .ingredients-list li {
-    padding: 8px 15px;
-    margin-bottom: 5px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    background-color: #fffbe6; /* Amarillo suave para destacar ingredientes */
 }

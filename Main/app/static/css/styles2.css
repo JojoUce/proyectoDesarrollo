@@ -2,14 +2,14 @@ body {
     font-family: 'Montserrat', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f7fc;
+    background-color: #f9f9f9; /* Blanco suave para frescura */
     display: flex;
 }
 
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background-color: #3498db; /* Azul */
+    background-color: #2ecc71; /* Verde para salud y frescura */
     color: white;
     height: 100vh;
     padding-top: 20px;
@@ -41,7 +41,7 @@ body {
 .sidebar-menu li {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #2980b9;
+    border-bottom: 1px solid #27ae60; /* Verde más oscuro */
     display: flex;
     align-items: center;
     transition: background-color 0.3s ease;
@@ -57,7 +57,7 @@ body {
 }
 
 .sidebar-menu li:hover {
-    background-color: #2980b9;
+    background-color: #27ae60; /* Verde al hacer hover */
 }
 
 .sidebar-menu li i {
@@ -84,7 +84,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 15px;
-    background-color: #ecf0f1;
+    background-color: #ecf0f1; /* Blanco suave */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -114,7 +114,7 @@ body {
 }
 
 .search-button {
-    background-color: #3498db;
+    background-color: #e67e22; /* Naranja para destacar */
     color: white;
     border: none;
     padding: 10px 15px;
@@ -139,7 +139,7 @@ body {
 }
 
 .dropbtn {
-    background-color: #3498db;
+    background-color: #3498db; /* Azul para confianza */
     color: white;
     padding: 10px 20px;
     border: none;
@@ -257,7 +257,7 @@ body {
 
 /* Contenedor principal del formulario */
 .content-area {
-    background-color: #f9f9f9;
+    background-color: #ffffff; /* Blanco limpio para frescura */
     padding: 40px;
     margin-left: auto; /* Esto garantiza que el contenedor se centre */
     margin-right: auto; /* Esto garantiza que el contenedor se centre */
@@ -302,13 +302,13 @@ form {
 }
 
 .form-group-2 input:focus {
-    border-color: #007bff;
+    border-color: #e67e22; /* Naranja para enfoque */
     outline: none;
 }
 
 /* Botón de enviar */
 .btn-2 {
-    background-color: #007bff;
+    background-color: #e67e22; /* Naranja vibrante */
     color: white;
     padding: 12px 24px;
     border: none;
@@ -319,7 +319,7 @@ form {
 }
 
 .btn-2:hover {
-    background-color: #0056b3;
+    background-color: #d35400; /* Naranja oscuro */
 }
 
 /* Ajuste para pantallas pequeñas */
@@ -336,6 +336,7 @@ form {
         width: 100%;
     }
 }
+
 .chart-container {
     position: relative;
     margin-bottom: 20px;
