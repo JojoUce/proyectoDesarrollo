@@ -216,13 +216,8 @@ def restricciones():
 def agregar_metricas():
     if request.method == 'POST':
         usuario_id = current_user.id
-        
-        # Obtener los valores del formulario
         nombre_metrica = request.form.get('selectedMetric')
         valor_metrica = request.form.get('metricValue', type=int)
-
-        # Asegúrate de que los datos se reciban correctamente
-        print(f"Nombre Métrica: {nombre_metrica}, Valor Métrica: {valor_metrica}")
 
         if nombre_metrica and valor_metrica is not None:
             nueva_metrica = MetricasUsuario(
@@ -238,7 +233,10 @@ def agregar_metricas():
 
         return redirect(url_for('bp.agregar_metricas'))
 
-    return render_template('agregar_metricas.html')
+    # 🔹 Obtener las métricas almacenadas del usuario
+    metricas_usuario = MetricasUsuario.query.filter_by(usuario_id=current_user.id).order_by(MetricasUsuario.actualizado_en.desc()).limit(10).all()
+
+    return render_template('agregar_metricas.html', metricas=metricas_usuario)
 
 '''
 @bp.route('/generar_receta', methods=['GET', 'POST'])
