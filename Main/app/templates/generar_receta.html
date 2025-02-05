@@ -15,7 +15,7 @@
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <div class="sidebar-header">
-            <h2>FastFit</h2>
+            <h2>GRUPO</h2>
         </div>
         <ul class="sidebar-menu">
             <li><i class="fas fa-home"></i><a href="{{ url_for('bp.index') }}">Página Inicio</a></li>
@@ -23,7 +23,7 @@
             <li><i class="fas fa-chart-line"></i><a href="{{ url_for('bp.agregar_metricas') }}">Seguimiento</a></li>
             <li><i class="fas fa-exclamation-circle"></i><a href="{{ url_for('bp.restricciones') }}">Restricciones</a></li>
             <li><i class="fas fa-history"></i><a href="{{ url_for('bp.historial') }}">Historial</a></li>
-            <li><i class="fas fa-utensils"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>
+            <li><i class="fas fa-cogs"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>
             <li><i class="fas fa-chart-bar"></i><a href="#">Charts</a></li>
             <li><i class="fas fa-th-large"></i><a href="#">Tables</a></li>
         </ul> 
@@ -68,28 +68,33 @@
                 <div class="col-md-8">
                     <div class="main-content2 animate__animated animate__fadeInUp">
                         <h2 class="text-center mb-4">Generador de Recetas Personalizadas</h2>
-                        <form action="/generar_receta" method="POST">
+                        
+                        <!-- FORMULARIO PARA INGRESAR INGREDIENTES -->
+                        <form action="{{ url_for('bp.generar_receta') }}" method="POST">
                             <div class="form-group">
                                 <label for="ingredientes">Selecciona los ingredientes (separados por coma):</label>
                                 <input type="text" name="ingredientes" class="form-control" id="ingredientes" placeholder="Ej: tomate, pollo, pasta" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Generar Receta</button>
                         </form>
-    
+
+                        <!-- SECCIÓN DONDE SE MUESTRA LA RECETA Y LA IMAGEN -->
                         {% if receta %}
                             <div class="receta-container mt-4">
                                 <h3>Receta Generada:</h3>
                                 <p>{{ receta | safe }}</p>
-    
+
                                 {% if imagen_url %}
-                                    <h4>Imagen de la Receta:</h4>
-                                    <img src="{{ imagen_url }}" alt="Imagen de la receta" class="img-fluid" />
+                                     <h4>Imagen de la Receta:</h4>
+                                        <img src="{{ imagen_url }}?v={{ random() }}" alt="Imagen de la receta" class="img-fluid" style="max-width: 500px; border-radius: 10px;">
                                 {% else %}
-                                    <p>--No se pudo generar la imagen para esta receta.--</p>
-                                {% endif %}
+                                     <p style="color: red;">⚠ No se pudo generar la imagen. Intenta de nuevo en unos minutos.</p>
+                            {% endif %}
+
+
                             </div>
                         {% endif %}
-    
+
                         <!-- Mensajes de éxito o error -->
                         {% with messages = get_flashed_messages(with_categories=true) %}
                             {% if messages %}
@@ -108,6 +113,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/script.js"></script>
-    <script src="/static/js/message.js"></script>
 </body>
 </html>
