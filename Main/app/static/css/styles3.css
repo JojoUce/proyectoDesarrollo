@@ -35,14 +35,25 @@ body {
 
 /* Botones */
 .btn-primary {
-    background-color: #007bbf; /* Azul confianza */
-    border: 2px solid #007bbf;
+    background-color: #e67e22; /* Naranja */
+    border: 2px solid #e67e22;
 }
 
 .btn-primary:hover {
-    background-color: #005a8d; /* Azul más oscuro al pasar el cursor */
-    border-color: #005a8d;
+    background-color: #c95e00; /* Azul más oscuro al pasar el cursor */
+    border-color: #c95e00;
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+}
+
+.btn-outline-primary {
+    border-color: #2a7a4f; /* Cambia el borde a verde */
+    color: #2a7a4f; /* Cambia el color del texto */
+}
+
+.btn-outline-primary:hover {
+    background-color: #2a7a4f; /* Fondo verde al pasar el ratón */
+    border-color: #2a7a4f;
+    color: white; /* Cambia el texto a blanco */
 }
 
 /* Resultados de receta */
