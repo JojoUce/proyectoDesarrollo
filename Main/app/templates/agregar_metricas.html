@@ -15,18 +15,16 @@
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <div class="sidebar-header">
-            <h2>GRUPO</h2>
+            <h2>FastFit</h2>
         </div>
         <ul class="sidebar-menu">
-            <li><i class="fas fa-cogs"></i><a href="{{ url_for('bp.index') }}">Página Inicio</a></li>
-            <li><i class="fas fa-tachometer-alt"></i><a href="{{ url_for('bp.tablas') }}">Dashboard</a></li>
-            <li><i class="fas fa-cogs"></i><a href="{{ url_for('bp.agregar_metricas') }}">Seguimiento</a></li>
-            <li><i class="fas fa-bell"></i><a href="{{ url_for('bp.restricciones') }}">Restricciones</a></li>
-            <li><i class="fas fa-plug"></i><a href="{{ url_for('bp.historial') }}">Historial</a></li>
-            <li><i class="fas fa-file-alt"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>
-            <li><i class="fas fa-chart-pie"></i><a href="#">Charts</a></li>
-            <li><i class="fas fa-table"></i><a href="#">Tables</a></li>
-        </ul>
+            <li><i class="fas fa-home"></i><a href="{{ url_for('bp.index') }}">Página Inicio</a></li>
+            <li><i class="fas fa-chart-bar"></i><a href="{{ url_for('bp.tablas') }}">Dashboard</a></li>
+            <li><i class="fas fa-chart-line"></i><a href="{{ url_for('bp.agregar_metricas') }}">Seguimiento</a></li>
+            <li><i class="fas fa-exclamation-circle"></i><a href="{{ url_for('bp.restricciones') }}">Restricciones</a></li>
+            <li><i class="fas fa-history"></i><a href="{{ url_for('bp.historial') }}">Historial</a></li>
+            <li><i class="fas fa-utensils"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>            
+        </ul> 
     </div>
 
     <!-- Contenido principal -->
@@ -76,9 +74,6 @@
                     <button type="button" class="btn btn-outline-primary mx-2" id="btnConfiguraciones" data-metric="Configuraciones activas">
                         <i class="fas fa-cogs"></i> Configuraciones activas
                     </button>
-                    <button type="button" class="btn btn-outline-primary mx-2" id="btnBusquedas" data-metric="Búsquedas realizadas">
-                        <i class="fas fa-search"></i> Búsquedas realizadas
-                    </button>
                 </div>
     
                 <!-- Campo oculto para almacenar la métrica seleccionada -->
@@ -93,6 +88,33 @@
                 <!-- Botón de guardar -->
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Guardar Métrica</button>
+                </div>
+
+                <div class="container mt-5">
+                    <h2 class="text-center mb-4">Métricas Almacenadas</h2>
+                    
+                    {% if metricas %}
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Valor</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for metrica in metricas %}
+                                <tr>
+                                    <td>{{ metrica.nombre_metrica }}</td>
+                                    <td>{{ metrica.valor_metrica }}</td>
+                                    <td>{{ metrica.actualizado_en.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-center">No hay métricas registradas.</p>
+                    {% endif %}
                 </div>
             </form>
         </div>

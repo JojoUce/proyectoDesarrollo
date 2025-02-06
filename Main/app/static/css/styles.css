@@ -86,10 +86,10 @@ body {
 }
 
 .form-container {
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra el formulario horizontalmente */
+    align-items: center; 
 }
 
 h2 {
@@ -144,13 +144,27 @@ button:hover {
     background-color: #0056b3;
 }
 
+.login-link {
+    text-align: center;
+    margin-top: 20px;
+}
+.login-link a{
+    color: #e67e22;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
 .register-link {
     text-align: center;
     margin-top: 20px;
 }
 
 .register-link a {
-    color: #007BFF;
+    color: #e67e22;
     text-decoration: none;
     font-weight: bold;
 }
@@ -193,7 +207,7 @@ input[type="number"] {
 button[type="submit"] {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #3b8b5f;
     color: white;
     border: none;
     font-size: 16px;
@@ -202,12 +216,12 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #2a7a4f;
 }
 
 /* Enlace de registro */
 .register-link a {
-    color: #007bff;
+    color: #e67e22;
     text-decoration: none;
 }
 

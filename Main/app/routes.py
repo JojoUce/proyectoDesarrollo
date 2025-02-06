@@ -1,3 +1,4 @@
+import requests
 import re
 from dotenv import load_dotenv
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
@@ -8,10 +9,13 @@ import pandas as pd
 import plotly.express as px
 from groq import Groq
 import openai
+import os
+import uuid  # Para generar nombres únicos de imagen
+import random
 
 # Cargar variables de entorno (incluye la clave de API de Groq)
 load_dotenv()
-
+HF_API_KEY = os.getenv("HF_API_KEY")
 # Inicializar el cliente de Groq
 qclient = Groq()
 
@@ -212,13 +216,8 @@ def restricciones():
 def agregar_metricas():
     if request.method == 'POST':
         usuario_id = current_user.id
-        
-        # Obtener los valores del formulario
         nombre_metrica = request.form.get('selectedMetric')
         valor_metrica = request.form.get('metricValue', type=int)
-
-        # Asegúrate de que los datos se reciban correctamente
-        print(f"Nombre Métrica: {nombre_metrica}, Valor Métrica: {valor_metrica}")
 
         if nombre_metrica and valor_metrica is not None:
             nueva_metrica = MetricasUsuario(
@@ -234,14 +233,12 @@ def agregar_metricas():
 
         return redirect(url_for('bp.agregar_metricas'))
 
-    return render_template('agregar_metricas.html')
+    # 🔹 Obtener las métricas almacenadas del usuario
+    metricas_usuario = MetricasUsuario.query.filter_by(usuario_id=current_user.id).order_by(MetricasUsuario.actualizado_en.desc()).limit(10).all()
 
+    return render_template('agregar_metricas.html', metricas=metricas_usuario)
 
-
-
-
-
-
+'''
 @bp.route('/generar_receta', methods=['GET', 'POST'])
 @login_required
 def generar_receta():
@@ -288,6 +285,7 @@ def generar_receta():
             receta = f"<p><strong>Error:</strong> {str(e)}</p>"
 
     return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url)
+'''
 
 def format_receta(response):
     response = response.replace('\n', '<br>')
@@ -303,7 +301,7 @@ def extraer_nombre_receta(response):
     """
     match = re.search(r'"([^"]+)"', response)  # Buscar el texto entre comillas
     return match.group(1) if match else None
-
+'''
 def generar_imagen_dalle(nombre_receta):
     """
     Utiliza el nombre de la receta para generar la imagen en DALL·E.
@@ -323,7 +321,95 @@ def generar_imagen_dalle(nombre_receta):
     except Exception as e:
         print(f"Error generando la imagen: {e}")
         return None
+'''
+@bp.route('/generar_receta', methods=['GET', 'POST'])
+@login_required
+def generar_receta():
+    receta = None
+    imagen_url = None
+    restricciones = []
 
+    # Obtener restricciones dietéticas del usuario
+    restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(
+        UsuarioRestriccion.usuario_id == current_user.id
+    ).all()
+
+    restricciones = [restriccion.nombre for restriccion in restricciones_db]
+
+    if request.method == 'POST':
+        ingredientes = request.form.getlist('ingredientes')
+
+        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."
+
+        try:
+            stream_response = qclient.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "Solo generar recetas en español."},
+                    {"role": "user", "content": prompt},
+                ],
+                model="llama3-8b-8192",
+                stream=True
+            )
+
+            response = ''
+            for chunk in stream_response:
+                if chunk.choices[0].delta.content:
+                    response += chunk.choices[0].delta.content
+
+            receta = format_receta(response)
+
+            # Extraer el nombre de la receta y generar imagen con Hugging Face
+            nombre_receta = extraer_nombre_receta(response)
+            if nombre_receta:
+                imagen_url = generar_imagen_huggingface(nombre_receta)
+
+            print("🔗 URL de la imagen generada:", imagen_url)  # Debugging
+
+        except Exception as e:
+            receta = f"<p><strong>Error:</strong> {str(e)}</p>"
+
+    return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url, random=random.random)
+
+def generar_imagen_huggingface(nombre_receta):
+    """Genera una imagen con Hugging Face y la guarda en app/static/img/ con un nombre único."""
+    if not HF_API_KEY:
+        print("ERROR: No se encontró la API Key de Hugging Face.")
+        return None
+
+    try:
+        response = requests.post(
+            "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
+            headers={"Authorization": f"Bearer {HF_API_KEY}"},
+            json={"inputs": f"Un plato delicioso de {nombre_receta}, con presentación atractiva, en un fondo de cocina profesional."}
+        )
+
+        if response.status_code == 503:
+            print("El modelo está cargando en Hugging Face, intenta en unos minutos.")
+            return None
+
+        if response.status_code == 200:
+            # Guardar las imágenes en "app/static/img"
+            image_dir = os.path.join("app", "static", "img")
+            os.makedirs(image_dir, exist_ok=True)  # Crear la carpeta si no existe
+
+            # Generar un nombre único para la imagen
+            image_filename = f"receta_{uuid.uuid4().hex}.jpg"
+            image_path = os.path.join(image_dir, image_filename)
+
+            # Guardar la imagen en la carpeta correcta
+            with open(image_path, "wb") as f:
+                f.write(response.content)
+
+            print("Imagen guardada en:", image_path)
+            return f"/static/img/{image_filename}"  # URL accesible en Flask
+
+        else:
+            print(f"Error en Hugging Face: {response.status_code} - {response.text}")
+            return None
+
+    except Exception as e:
+        print(f"ERROR generando imagen con Hugging Face: {e}")
+        return None
 
 
 
