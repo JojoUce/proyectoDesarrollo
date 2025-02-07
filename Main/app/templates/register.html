@@ -13,16 +13,18 @@
         <div class="form-container">
             <h2>Crear cuenta</h2>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="alert">
+            <div id="flash-messages" class="flash-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert-{{ category }}">{{ message }}</div>
+                            <div class="flash-message flash-{{ category }}">
+                                {{ message }}
+                            </div>
                         {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
             <form method="POST">
                 <label for="nombre_usuario">Nombre de usuario</label>
                 <input type="text" id="nombre_usuario" name="nombre_usuario" required>
@@ -39,7 +41,7 @@
                 <label for="edad">Edad</label>
                 <input type="number" id="edad" name="edad" required>
 
-                <label for="altura">Altura</label>
+                <label for="altura">Altura (cm)</label>
                 <input type="number" id="altura" name="altura" required>
 
                 <button type="submit">Crear cuenta</button>

@@ -59,6 +59,24 @@ def register():
         edad = request.form.get('edad')
         altura = request.form.get('altura')
 
+        #Validar la edad y altura que ingresa el usuario al registrarse
+        try: 
+            edad = int(edad)
+            altura = int (altura)
+        except ValueError:
+            flash('Ingrese valores numéricos correctos', 'danger')
+            return redirect(url_for('bp.register'))
+        
+        # Validar rango de edad 
+        if not (1 <= edad <= 110):
+            flash('Ingrese la edad correcta', 'danger')
+            return redirect(url_for('bp.register'))
+
+        #Validar el rango de la altura
+        if not (30 <= altura <= 200):
+            flash('Ingrese la altura correcta', 'danger')
+            return redirect(url_for('bp.register'))
+
         if contrasena != confirm_contrasena:
             flash('Las contraseñas no coinciden', 'danger')
             return redirect(url_for('bp.register'))
@@ -93,7 +111,7 @@ def register():
 
 
 @bp.route('/perfil', methods=['GET', 'POST'])
-@login_required  #
+@login_required  
 def perfil():
     if request.method == 'POST':
         nombre_usuario = request.form.get('nombre_usuario')
