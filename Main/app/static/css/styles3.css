@@ -73,3 +73,19 @@ body {
 .ingredients-list li {
     background-color: #fffbe6; /* Amarillo suave para destacar ingredientes */
 }
+
+.card {
+    height: 230px; /* Establece una altura fija para las tarjetas */
+    overflow: hidden; /* Asegura que el contenido no se desborde si es muy grande */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex: 1;
+    overflow-y: auto; /* Habilita el desplazamiento si el contenido es largo */
+}
+
+.card-title, .card-text, .fecha, .ingredientes {
+    margin-bottom: 10px; /* Espaciado entre los elementos dentro de la tarjeta */
+}

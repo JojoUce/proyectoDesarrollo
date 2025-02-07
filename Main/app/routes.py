@@ -12,6 +12,7 @@ import openai
 import os
 import uuid  # Para generar nombres únicos de imagen
 import random
+from bs4 import BeautifulSoup
 
 # Cargar variables de entorno (incluye la clave de API de Groq)
 load_dotenv()
@@ -358,17 +359,45 @@ def generar_receta():
 
             receta = format_receta(response)
 
-            # Extraer el nombre de la receta y generar imagen con Hugging Face
+            # Extraer el nombre de la receta
             nombre_receta = extraer_nombre_receta(response)
+
+            # Generar imagen con Hugging Face
             if nombre_receta:
                 imagen_url = generar_imagen_huggingface(nombre_receta)
 
-            print("🔗 URL de la imagen generada:", imagen_url)  # Debugging
+            # Limpiar el contenido HTML para la base de datos
+            receta_limpia = limpiar_html_para_bd(response)
+
+            # Guardar en la base de datos
+            if receta_limpia:
+                nueva_receta = Receta(
+                    titulo=nombre_receta,
+                    descripcion=receta_limpia,
+                    creado_por=current_user.id
+                )
+                db.session.add(nueva_receta)
+                db.session.commit()
+                print(f"✅ Receta '{nombre_receta}' guardada en la base de datos.")
 
         except Exception as e:
             receta = f"<p><strong>Error:</strong> {str(e)}</p>"
 
     return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url, random=random.random)
+
+
+def limpiar_html_para_bd(texto):
+    """Limpia el HTML antes de guardarlo en la base de datos."""
+    # Eliminar etiquetas <br> y reemplazarlas por saltos de línea
+    texto_limpio = re.sub(r'<br\s*/?>', '\n', texto)
+    
+    # Eliminar etiquetas <p>, <div>, <strong>, etc. si no son necesarias
+    texto_limpio = re.sub(r'<[^>]+>', '', texto_limpio)
+    
+    # Opcional: Eliminar cualquier espacio extra o normalizar los saltos de línea
+    texto_limpio = re.sub(r'\n+', '\n', texto_limpio).strip()
+    
+    return texto_limpio
 
 def generar_imagen_huggingface(nombre_receta):
     """Genera una imagen con Hugging Face y la guarda en app/static/img/ con un nombre único."""
