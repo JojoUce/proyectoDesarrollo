@@ -9,16 +9,34 @@ body {
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background-color: #2ecc71; /* Verde para salud y frescura */
+    background-color: #2ecc71;
     color: white;
     height: 100vh;
     padding-top: 20px;
     position: fixed;
     transition: width 0.3s ease;
+    z-index: 10; /* Asegura que el sidebar tenga una capa superior */
 }
 
+
 .sidebar.collapsed {
-    width: 80px; /* Cuando se colapsa */
+    width: 80px;
+}
+
+
+/* Asegurarse de que los íconos se muestren cuando la barra está colapsada */
+.sidebar.collapsed .sidebar-menu li a {
+    display: flex;
+    justify-content: center; /* Centra los íconos */
+}
+
+.sidebar.collapsed .sidebar-menu li {
+    text-align: center; /* Alinea los íconos al centro */
+}
+
+/* Para evitar la superposición del contenido */
+.sidebar .sidebar-header {
+    padding-left: 20px;
 }
 
 .sidebar-header h2 {
@@ -28,7 +46,6 @@ body {
     transition: opacity 0.3s ease;
     font-weight: 600;
 }
-
 .sidebar.collapsed .sidebar-header h2 {
     opacity: 0;
 }
@@ -68,6 +85,7 @@ body {
 }
 
 /* Main content area */
+/* Ajustes en el contenido principal para no colisionar con el sidebar */
 .main-content {
     margin-left: 250px;
     padding: 20px;
@@ -78,7 +96,6 @@ body {
 .sidebar.collapsed ~ .main-content {
     margin-left: 80px;
 }
-
 /* Navbar */
 .navbar {
     display: flex;
@@ -177,26 +194,39 @@ body {
     background-color: #ddd;
 }
 
-/* Icono de colapsar */
+/* Botón para colapsar */
 .toggle-btn {
     font-size: 30px;
     color: white;
     background: none;
     border: none;
     position: absolute;
-    top: 20px;
+    top: 20px; /* Ajustado para que esté en la parte superior */
     left: 20px;
     cursor: pointer;
+    z-index: 20; /* Asegura que el botón esté por encima del sidebar */
 }
+
 
 /* Efecto al hacer hover en los iconos del menú */
 .sidebar-menu li:hover i {
     color: #fff;
 }
 
+/* Asegura que el texto del título "FastFit" no se superponga con el botón */
+.sidebar.collapsed .sidebar-header h2 {
+    opacity: 0; /* El título desaparece al colapsar */
+    position: relative;
+    z-index: 1;
+}
 /* Hacer que el texto se oculte al colapsar */
 .sidebar.collapsed .sidebar-menu li a {
     display: none;
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    padding: 0;
 }
 
 
