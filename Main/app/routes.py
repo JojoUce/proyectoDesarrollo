@@ -1,3 +1,4 @@
+import types
 import requests
 import re
 from dotenv import load_dotenv
@@ -10,15 +11,23 @@ import plotly.express as px
 from groq import Groq
 import openai
 import os
-import uuid  # Para generar nombres únicos de imagen
+import uuid
 import random
 from bs4 import BeautifulSoup
+from werkzeug.utils import secure_filename
+from google.cloud import vision
 
-# Cargar variables de entorno (incluye la clave de API de Groq)
+
+
 load_dotenv()
-HF_API_KEY = os.getenv("HF_API_KEY")
-# Inicializar el cliente de Groq
 qclient = Groq()
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../proyectoDesarrollo/Main/googlevision.json'
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    """Verifica si el archivo tiene una extensión permitida"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 bp = Blueprint('bp', __name__)
@@ -58,8 +67,6 @@ def register():
         confirm_contrasena = request.form.get('confirm_contrasena')
         edad = request.form.get('edad')
         altura = request.form.get('altura')
-
-        #Validar la edad y altura que ingresa el usuario al registrarse
         try: 
             edad = int(edad)
             altura = int (altura)
@@ -67,12 +74,11 @@ def register():
             flash('Ingrese valores numéricos correctos', 'danger')
             return redirect(url_for('bp.register'))
         
-        # Validar rango de edad 
+
         if not (1 <= edad <= 110):
             flash('Ingrese la edad correcta', 'danger')
             return redirect(url_for('bp.register'))
 
-        #Validar el rango de la altura
         if not (30 <= altura <= 200):
             flash('Ingrese la altura correcta', 'danger')
             return redirect(url_for('bp.register'))
@@ -140,7 +146,6 @@ def perfil():
 def tablas():
     from .models import MetricasUsuario
 
-    # Definimos las métricas que vamos a consultar
     metricas_especificas = [
         "Pasos diarios",
         "Calorías quemadas",
@@ -148,26 +153,23 @@ def tablas():
         "Búsquedas realizadas"
     ]
 
-    # Usamos un diccionario para guardar los resultados de cada métrica
     resultados_metricas = {}
 
-    # Realizamos la consulta por cada tipo de métrica
+
     for metrica in metricas_especificas:
         resultados_metricas[metrica] = (
             MetricasUsuario.query
             .filter(MetricasUsuario.usuario_id == current_user.id, MetricasUsuario.nombre_metrica == metrica)
             .order_by(MetricasUsuario.actualizado_en.desc())  # Ordenamos por la fecha de actualización (más reciente primero)
-            .limit(5)  # Limite de 5 resultados
+            .limit(5)
             .all()
         )
 
-    # Extraemos los valores de cada métrica
     pasos_diarios_values = [m.valor_metrica for m in resultados_metricas["Pasos diarios"]]
     calorias_quemadas_values = [m.valor_metrica for m in resultados_metricas["Calorías quemadas"]]
     configuraciones_activas_values = [m.valor_metrica for m in resultados_metricas["Configuraciones activas"]]
     busquedas_realizadas_values = [m.valor_metrica for m in resultados_metricas["Búsquedas realizadas"]]
 
-    # Pasamos los datos a la plantilla
     return render_template('tablas.html', 
                            pasos_diarios=pasos_diarios_values,
                            calorias_quemadas=calorias_quemadas_values,
@@ -187,10 +189,8 @@ def logout():
 @bp.route('/historial')
 @login_required
 def historial():
-    # Obtener todas las recetas de la base de datos
     recetas = Receta.query.filter_by(creado_por=current_user.id).all()
     
-    # Crear una lista de diccionarios con la información de las recetas
     recetas_data = []
     for receta in recetas:
         recetas_data.append({
@@ -204,19 +204,16 @@ def historial():
 @bp.route('/restricciones', methods=['GET', 'POST'])
 @login_required
 def restricciones():
-    # Si el método es POST, agregar la nueva restricción dietética
     if request.method == 'POST':
         nombre_restriccion = request.form.get('nombre_restriccion')
         descripcion = request.form.get('descripcion')
 
-        # Verificar que el nombre de la restricción no esté vacío
         if nombre_restriccion:
             # Crear una nueva restricción dietética
             nueva_restriccion = RestriccionDietetica(nombre=nombre_restriccion, descripcion=descripcion)
             db.session.add(nueva_restriccion)
             db.session.commit()
 
-            # Asociar la restricción dietética con el usuario logueado
             usuario_restriccion = UsuarioRestriccion(usuario_id=current_user.id, restriccion_id=nueva_restriccion.id)
             db.session.add(usuario_restriccion)
             db.session.commit()
@@ -252,59 +249,10 @@ def agregar_metricas():
 
         return redirect(url_for('bp.agregar_metricas'))
 
-    # 🔹 Obtener las métricas almacenadas del usuario
     metricas_usuario = MetricasUsuario.query.filter_by(usuario_id=current_user.id).order_by(MetricasUsuario.actualizado_en.desc()).limit(10).all()
 
     return render_template('agregar_metricas.html', metricas=metricas_usuario)
 
-'''
-@bp.route('/generar_receta', methods=['GET', 'POST'])
-@login_required
-def generar_receta():
-    receta = None
-    imagen_url = None
-    restricciones = []
-
-    restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(
-        UsuarioRestriccion.usuario_id == current_user.id
-    ).all()
-
-    for restriccion in restricciones_db:
-        restricciones.append(restriccion.nombre)
-
-    if request.method == 'POST':
-        ingredientes = request.form.getlist('ingredientes')
-
-        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}, finalmente me pones el nombre de la receta entre comillas y no le pongas en negrillas, todo esto en Español"
-
-        try:
-            stream_response = qclient.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": "Solo generar recetas en español."},
-                    {"role": "user", "content": prompt},
-                ],
-                model="llama3-8b-8192",
-                stream=True
-            )
-
-            response = ''
-            for chunk in stream_response:
-                if chunk.choices[0].delta.content:
-                    response += chunk.choices[0].delta.content
-
-            receta = format_receta(response)
-
-            # Extraer el nombre de la receta (lo que está entre comillas)
-            nombre_receta = extraer_nombre_receta(response)
-
-            if nombre_receta:
-                imagen_url = generar_imagen_dalle(nombre_receta)
-
-        except Exception as e:
-            receta = f"<p><strong>Error:</strong> {str(e)}</p>"
-
-    return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url)
-'''
 
 def format_receta(response):
     response = response.replace('\n', '<br>')
@@ -318,37 +266,40 @@ def extraer_nombre_receta(response):
     """
     Extrae el nombre de la receta desde la respuesta de Groq (lo que está entre comillas).
     """
-    match = re.search(r'"([^"]+)"', response)  # Buscar el texto entre comillas
+    match = re.search(r'"([^"]+)"', response)
     return match.group(1) if match else None
-'''
-def generar_imagen_dalle(nombre_receta):
-    """
-    Utiliza el nombre de la receta para generar la imagen en DALL·E.
-    """
-    try:
 
-        # Llamada para generar la imagen en DALL·E
-        response = openai.Image.create(
-            prompt=f"Imagen detallada de un plato gourmet llamado '{nombre_receta}', presentando los ingredientes mencionados.",
-            n=1,
-            size="1024x1024"
-        )
 
-        imagen_url = response['data'][0]['url']
-        return imagen_url
+def detectar_ingredientes_google_vision(imagen_path):
+    client = vision.ImageAnnotatorClient()
 
-    except Exception as e:
-        print(f"Error generando la imagen: {e}")
-        return None
-'''
+    with open(imagen_path, 'rb') as imagen:
+        content = imagen.read()
+
+    image = vision.Image(content=content)
+
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+
+    ingredientes = []
+    
+    if labels:
+        for label in labels:
+            ingredientes.append(label.description)
+
+    if response.error.message:
+        raise Exception(f'Error en Google Vision API: {response.error.message}')
+    
+    return ingredientes
+
 @bp.route('/generar_receta', methods=['GET', 'POST'])
 @login_required
 def generar_receta():
     receta = None
     imagen_url = None
     restricciones = []
+    ingredientes_detectados = []
 
-    # Obtener restricciones dietéticas del usuario
     restricciones_db = db.session.query(RestriccionDietetica).join(UsuarioRestriccion).filter(
         UsuarioRestriccion.usuario_id == current_user.id
     ).all()
@@ -356,16 +307,40 @@ def generar_receta():
     restricciones = [restriccion.nombre for restriccion in restricciones_db]
 
     if request.method == 'POST':
-        ingredientes = request.form.getlist('ingredientes')
+        if 'imagen' in request.files:
+            imagen = request.files['imagen']
+            if 'imagen' in request.files:
+                imagen = request.files['imagen']
+                if imagen.filename != '' and allowed_file(imagen.filename):
+                    filename = secure_filename(imagen.filename)
+                    filepath = os.path.join("uploads", filename)
+                    imagen.save(filepath)
+                    
+                    # Enviar imagen a Google Vision para detectar ingredientes
+                    ingredientes_detectados = detectar_ingredientes_google_vision(filepath)
+                    print("Ingredientes detectados desde la imagen:", ingredientes_detectados)
+                    os.remove(filepath)
 
-        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."
+        # Si el usuario ingresa ingredientes manualmente
+        ingredientes_manual = request.form.getlist('ingredientes')
+        ingredientes = list(set(ingredientes_detectados + ingredientes_manual))
+
+        if not ingredientes:
+            flash("No se detectaron ingredientes. Por favor, súbelo nuevamente o ingresa manualmente.", "warning")
+            return redirect(url_for('generar_receta'))
+
+        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}, ademas no pongas mensajes similares a este: Si quieres que te genere otra receta dimelo. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."
 
         try:
             stream_response = qclient.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": "Solo generar recetas en español."},
-                    {"role": "user", "content": prompt},
-                ],
+                messages=[{
+                    "role": "system", 
+                    "content": "Solo generar recetas en español."
+                },
+                {
+                    "role": "user", 
+                    "content": prompt
+                }],
                 model="llama3-8b-8192",
                 stream=True
             )
@@ -377,14 +352,10 @@ def generar_receta():
 
             receta = format_receta(response)
 
-            # Extraer el nombre de la receta
             nombre_receta = extraer_nombre_receta(response)
 
-            # Generar imagen con Hugging Face
             if nombre_receta:
                 imagen_url = generar_imagen_huggingface(nombre_receta)
-
-            # Limpiar el contenido HTML para la base de datos
             receta_limpia = limpiar_html_para_bd(response)
 
             # Guardar en la base de datos
@@ -402,7 +373,6 @@ def generar_receta():
             receta = f"<p><strong>Error:</strong> {str(e)}</p>"
 
     return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url, random=random.random)
-
 
 def limpiar_html_para_bd(texto):
     """Limpia el HTML antes de guardarlo en la base de datos."""
@@ -437,7 +407,7 @@ def generar_imagen_huggingface(nombre_receta):
         if response.status_code == 200:
             # Guardar las imágenes en "app/static/img"
             image_dir = os.path.join("app", "static", "img")
-            os.makedirs(image_dir, exist_ok=True)  # Crear la carpeta si no existe
+            os.makedirs(image_dir, exist_ok=True)
 
             # Generar un nombre único para la imagen
             image_filename = f"receta_{uuid.uuid4().hex}.jpg"

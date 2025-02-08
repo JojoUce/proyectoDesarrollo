@@ -22,7 +22,6 @@
             <li><i class="fas fa-history"></i><a href="{{ url_for('bp.historial') }}">Historial</a></li>
             <li><i class="fas fa-chart-bar"></i><a href="{{ url_for('bp.tablas') }}">Dashboard</a></li>
             <li><i class="fas fa-utensils"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>
-            
         </ul> 
     </div>
 
@@ -30,7 +29,6 @@
     <div class="main-content">
         <nav class="navbar navbar-light bg-light">
             <div class="container-fluid">
-            
                 <div class="navbar-user-info">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -64,13 +62,17 @@
                     <div class="main-content2 animate__animated animate__fadeInUp">
                         <h2 class="text-center mb-4">Generador de Recetas Personalizadas</h2>
                         
-                        <!-- FORMULARIO PARA INGRESAR INGREDIENTES -->
-                        <form action="{{ url_for('bp.generar_receta') }}" method="POST">
+                        <!-- FORMULARIO PARA INGRESAR INGREDIENTES Y SUBIR IMAGEN -->
+                        <form action="{{ url_for('bp.generar_receta') }}" method="POST" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="ingredientes">Selecciona los ingredientes (separados por coma):</label>
-                                <input type="text" name="ingredientes" class="form-control" id="ingredientes" placeholder="Ej: tomate, pollo, pasta" required>
+                                <input type="text" name="ingredientes" class="form-control" id="ingredientes" placeholder="Ej: tomate, pollo, pasta">
                             </div>
-                            <button type="submit" class="btn btn-primary">Generar Receta</button>
+                            <div class="form-group mt-3">
+                                <label for="imagen">Sube una imagen para detectar ingredientes:</label>
+                                <input type="file" name="imagen" class="form-control" id="imagen" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Generar Receta</button>
                         </form>
 
                         <!-- SECCIÓN DONDE SE MUESTRA LA RECETA Y LA IMAGEN -->
@@ -84,9 +86,7 @@
                                         <img src="{{ imagen_url }}?v={{ random() }}" alt="Imagen de la receta" class="img-fluid" style="max-width: 500px; border-radius: 10px;">
                                 {% else %}
                                      <p style="color: red;">⚠ No se pudo generar la imagen. Intenta de nuevo en unos minutos.</p>
-                            {% endif %}
-
-
+                                {% endif %}
                             </div>
                         {% endif %}
 

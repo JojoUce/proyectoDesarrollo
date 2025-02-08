@@ -1,9 +1,0 @@
-.env
-*.pyc
-node_modules/
-venv/
-.vscode/
-Main/.env
-Api_Key.env
-Main/.env
-Main/.env
