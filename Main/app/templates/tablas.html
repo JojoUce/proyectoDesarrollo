@@ -30,10 +30,7 @@
             <!-- Barra de navegación superior -->
             <nav class="navbar navbar-light bg-light">
                 <div class="container-fluid">
-                    <div class="navbar-search">
-                        <input class="search-input" type="text" placeholder="Buscar...">
-                        <button class="search-button">Buscar</button>
-                    </div>
+                   
                     <div class="navbar-user-info">
                         <div class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,6 +38,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                 <li><a class="dropdown-item" href="{{ url_for('bp.perfil') }}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('bp.restricciones') }}">Restricciones</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('bp.logout') }}">Cerrar sesión</a></li>
                             </ul>
                         </div>

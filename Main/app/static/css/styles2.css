@@ -142,7 +142,7 @@ body {
 .navbar-user-info {
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    margin-left: auto;
 }
 
 .user-name {
