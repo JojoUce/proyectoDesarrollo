@@ -20,6 +20,7 @@ from google.cloud import vision
 
 
 load_dotenv()
+HF_API_KEY = ''
 qclient = Groq()
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../proyectoDesarrollo/Main/googlevision.json'
 
