@@ -13,7 +13,7 @@
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <div class="sidebar-header">
-            <h2>FastFit</h2>
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo">
         </div>
         <ul class="sidebar-menu">
             <li><i class="fas fa-home"></i><a href="{{ url_for('bp.index') }}">Página Inicio</a></li>

@@ -18,10 +18,23 @@ body {
     z-index: 10; /* Asegura que el sidebar tenga una capa superior */
 }
 
+.sidebar ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  
+    padding-top: 40px;
+}
+
+
 
 .sidebar.collapsed {
     width: 80px;
 }
+
+.sidebar.collapsed i {
+    font-size: 20px;
+}
+
 
 
 /* Asegurarse de que los íconos se muestren cuando la barra está colapsada */
@@ -39,6 +52,14 @@ body {
     padding-left: 20px;
 }
 
+/* Logo */
+.sidebar-header img {
+    max-width: 50px;
+    height: auto;
+    margin-left: 80px; 
+}
+
+
 .sidebar-header h2 {
     text-align: center;
     color: #ecf0f1;
@@ -49,6 +70,11 @@ body {
 .sidebar.collapsed .sidebar-header h2 {
     opacity: 0;
 }
+
+.sidebar.collapsed .sidebar-header img {
+    display: none;
+}
+
 
 .sidebar-menu {
     list-style-type: none;
@@ -61,17 +87,24 @@ body {
     border-bottom: 1px solid #27ae60; /* Verde más oscuro */
     display: flex;
     align-items: center;
+    width: 100%; /* Corregido el error de sintaxis aquí */
     transition: background-color 0.3s ease;
 }
 
 .sidebar-menu li a {
     color: #ecf0f1;
     text-decoration: none;
-    display: block;
+    display: flex;
     margin-left: 10px;
-    flex: 1;
+    flex: 1; /* Hace que el enlace ocupe todo el ancho disponible */
     font-weight: 500;
 }
+
+
+.sidebar.collapsed .sidebar-menu li a span {
+    display: none; /* Oculta solo el texto */
+}
+
 
 .sidebar-menu li:hover {
     background-color: #27ae60; /* Verde al hacer hover */
