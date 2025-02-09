@@ -81,12 +81,43 @@
                         <div class="restriccion-card">
                             <h3>{{ restriccion.restriccion.nombre }}</h3>
                             <p>{{ restriccion.restriccion.descripcion }}</p>
+                            
+                            <!-- Botón para abrir el modal de edición -->
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarModal{{ restriccion.restriccion.id }}">Editar</button>
+            
+                            <!-- Formulario para eliminar -->
+                            <form method="POST" action="{{ url_for('bp.eliminar_restriccion', id=restriccion.restriccion.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar esta restricción?');">Eliminar</button>
+                            </form>
                         </div>
+            
+                        <!-- Modal para editar restricción -->
+                        <div class="modal fade" id="editarModal{{ restriccion.restriccion.id }}" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editarModalLabel">Editar Restricción</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('bp.editar_restriccion', id=restriccion.restriccion.id) }}">
+                                        <div class="modal-body">
+                                            <label for="descripcion" class="form-label">Nueva Descripción</label>
+                                            <textarea class="form-control" name="descripcion" required>{{ restriccion.restriccion.descripcion }}</textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+            
                     {% endfor %}
                 {% else %}
                     <p>No tienes restricciones dietéticas asociadas.</p>
                 {% endif %}
-            </div>
+            </div>            
         </div>
     </div>
 

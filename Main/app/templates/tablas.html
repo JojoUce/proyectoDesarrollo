@@ -14,7 +14,7 @@
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <div class="sidebar-header">
-            <img src="/static/imag/logo.jpg" alt="Logo" class="img-fluid" style="max-width: 100px;">
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo">
         </div>
         <ul class="sidebar-menu">
             <li><i class="fas fa-home"></i><a href="{{ url_for('bp.generar_receta') }}">Inicio</a></li>

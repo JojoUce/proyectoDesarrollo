@@ -22,7 +22,8 @@ from google.cloud import vision
 load_dotenv()
 HF_API_KEY = os.getenv('HF_API_KEY')
 qclient = Groq()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../proyectoDesarrollo/Main/googlevision.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:\\Users\\Eduar\\Documents\\GitHub\\proyectoDesarrollo\\Main\\googlevision.json"
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -220,6 +221,54 @@ def restricciones():
     restricciones_usuario = db.session.query(UsuarioRestriccion).join(RestriccionDietetica).filter(UsuarioRestriccion.usuario_id == current_user.id).all()
 
     return render_template('restricciones.html', restricciones=restricciones_usuario)
+
+@bp.route('/restricciones/editar/<uuid:id>', methods=['POST'])
+@login_required
+def editar_restriccion(id):
+    restriccion_id = str(id)  # Convertir UUID a string
+
+    restriccion_usuario = db.session.query(UsuarioRestriccion).join(RestriccionDietetica).filter(
+        UsuarioRestriccion.usuario_id == current_user.id,
+        UsuarioRestriccion.restriccion_id == restriccion_id
+    ).first()
+
+    if not restriccion_usuario:
+        flash("No tienes permiso para modificar esta restricción.", "danger")
+        return redirect(url_for('bp.restricciones'))
+
+    nueva_descripcion = request.form.get('descripcion')
+    restriccion_usuario.restriccion.descripcion = nueva_descripcion
+    db.session.commit()
+
+    flash("Restricción modificada con éxito.", "success")
+    return redirect(url_for('bp.restricciones'))
+
+@bp.route('/restricciones/eliminar/<uuid:id>', methods=['POST'])
+@login_required
+def eliminar_restriccion(id):
+    restriccion_id = str(id)  # Convertir UUID a string
+
+    restriccion_usuario = db.session.query(UsuarioRestriccion).filter_by(
+        usuario_id=current_user.id, restriccion_id=restriccion_id
+    ).first()
+
+    if not restriccion_usuario:
+        flash("No tienes permiso para eliminar esta restricción.", "danger")
+        return redirect(url_for('bp.restricciones'))
+
+    db.session.delete(restriccion_usuario)
+    db.session.commit()
+
+    # Verificar si la restricción no tiene más usuarios asociados y eliminarla
+    otras_asociaciones = db.session.query(UsuarioRestriccion).filter_by(restriccion_id=restriccion_id).count()
+    if otras_asociaciones == 0:
+        restriccion = db.session.query(RestriccionDietetica).get(restriccion_id)
+        if restriccion:
+            db.session.delete(restriccion)
+            db.session.commit()
+
+    flash("Restricción eliminada con éxito.", "success")
+    return redirect(url_for('bp.restricciones'))
 
 @bp.route('/agregar_metricas', methods=['GET', 'POST'])
 @login_required
