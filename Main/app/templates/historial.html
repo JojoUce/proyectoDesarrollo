@@ -69,14 +69,7 @@
                                         <h5 class="card-title">{{ receta.titulo }}</h5>
                                         <p class="card-text">{{ receta.descripcion }}</p>
                                         <div class="fecha text-muted">Creada el: {{ receta.fecha }}</div>
-                                        <div class="ingredientes">
-                                            <strong>Ingredientes:</strong>
-                                            <ul>
-                                                {% for ingrediente in receta.ingredientes %}
-                                                    <li>{{ ingrediente.nombre }} - {{ ingrediente.cantidad }} {{ ingrediente.unidad }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
