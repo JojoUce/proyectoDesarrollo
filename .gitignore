@@ -8,3 +8,4 @@ Api_Key.env
 /Main/.env
 /Main/.env
 /Main/googlevision.json
+.env
