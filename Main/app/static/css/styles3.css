@@ -56,6 +56,24 @@ body {
     color: white; /* Cambia el texto a blanco */
 }
 
+/*Separador*/
+.separador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    opacity: 0.5; 
+}
+
+.separador::before,
+.separador::after {
+    content: "";
+    flex-grow: 0.5; 
+    border-top: 1px solid #000; /* Línea del separador */
+    margin: 0 10px; /* Espacio entre la letra "O" y las líneas */
+    opacity: 0.5; 
+}
+
 /* Resultados de receta */
 .receta-generada {
     background-color: #e3f2fd; /* Azul claro para resaltar la receta */
