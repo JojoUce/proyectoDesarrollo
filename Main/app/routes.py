@@ -1,19 +1,14 @@
-import types
 import requests
 import re
 from dotenv import load_dotenv
-from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from . import db
 from .models import MetricasUsuario, ParametrosNutricionales, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
 from flask_login import login_user, login_required, current_user, logout_user
-import pandas as pd
-import plotly.express as px
 from groq import Groq
-import openai
 import os
 import uuid
 import random
-from bs4 import BeautifulSoup
 from werkzeug.utils import secure_filename
 from google.cloud import vision
 
@@ -22,7 +17,7 @@ from google.cloud import vision
 load_dotenv()
 HF_API_KEY = os.getenv('HF_API_KEY')
 qclient = Groq()
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "C:\\Users\\Eduar\\Documents\\GitHub\\proyectoDesarrollo\\Main\\googlevision.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "../proyectoDesarrollo/Main/googlevision.json"
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -372,7 +367,8 @@ def generar_receta():
             return redirect(url_for('generar_receta'))
 
         prompt = f"""Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones obligatoriamente: {', '.join(restricciones)} con su detalle
-        {', '.join(valor_restriccion)}. Además, incluye los siguientes detalles nutricionales para la receta:
+        {', '.join(valor_restriccion)} y si en tal caso la persona te ingresa un producto donde incluye algo de las restricciones da un pequeño consejo
+        de que ni puedes generar la receta con esas caracteristicas y recomienda una. Además, incluye los siguientes detalles nutricionales para la receta:
 
         1. Calorías (kcal)
         2. Proteínas (g)
@@ -381,7 +377,7 @@ def generar_receta():
         5. Sodio (mg)
         6. Azúcar (g)
 
-        Por favor, incluye estos valores de manera clara y precisa. No pongas mensajes similares a este: 'Si quieres que te genere otra receta, dimelo'. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."""
+        Por favor, incluye estos valores de manera clara y precisa. No pongas mensajes similares a este: 'Si quieres que te genere otra receta, dimelo'. Finalmente, coloca el nombre de la receta entre comillas sin negritas recuerda solo asi. Todo en Español."""
 
 
         try:
