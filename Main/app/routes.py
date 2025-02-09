@@ -37,7 +37,7 @@ bp = Blueprint('bp', __name__)
 @bp.route('/')
 @login_required
 def index():
-    return render_template('index.html', nombre_usuario=current_user.nombre_usuario)
+    return render_template('generar_receta.html', nombre_usuario=current_user.nombre_usuario)
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -52,7 +52,7 @@ def login():
         if usuario and usuario.verificar_contrasena(contrasena):
             login_user(usuario)
             flash('Inicio de sesión exitoso', 'success')
-            return redirect(url_for('bp.index')) 
+            return redirect(url_for('bp.generar_receta')) 
 
         flash('Usuario o contraseña incorrectos', 'danger')
 
@@ -168,7 +168,7 @@ def tablas():
     else:
         flash("No tienes recetas generadas aún.", "warning")
     
-    return redirect(url_for('index'))  # Redirigir al inicio si no se encuentra receta
+    return redirect(url_for('generar_receta'))  # Redirigir al inicio si no se encuentra receta
 
 
 

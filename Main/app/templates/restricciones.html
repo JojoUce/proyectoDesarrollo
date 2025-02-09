@@ -14,14 +14,14 @@
     <div class="sidebar">
         <button class="toggle-btn" onclick="toggleSidebar()">&#9776;</button>
         <div class="sidebar-header">
-            <img src="/static/imag/logo.jpg" alt="Logo" class="img-fluid" style="max-width: 100px;">
+            <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo">
         </div>
         <ul class="sidebar-menu">
-            <li><i class="fas fa-home"></i><a href="{{ url_for('bp.index') }}">Página Inicio</a></li>
+            <li><i class="fas fa-home"></i><a href="{{ url_for('bp.generar_receta') }}">Inicio</a></li>
             <li><i class="fas fa-history"></i><a href="{{ url_for('bp.historial') }}">Historial</a></li>
             <li><i class="fas fa-chart-bar"></i><a href="{{ url_for('bp.tablas') }}">Dashboard</a></li>
-            <li><i class="fas fa-utensils"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>            
-        </ul>
+            <!--<li><i class="fas fa-utensils"></i><a href="{{ url_for('bp.generar_receta') }}">Generador de Recetas</a></li>-->
+        </ul> 
     </div>
 
     <div class="main-content">
@@ -38,6 +38,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item" href="{{ url_for('bp.perfil') }}">Perfil</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('bp.restricciones') }}">Restricciones</a></li>
                             <li><a class="dropdown-item" href="{{ url_for('bp.logout') }}">Cerrar sesión</a></li>
                         </ul>
                     </div>
