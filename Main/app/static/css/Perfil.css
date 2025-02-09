@@ -1,0 +1,165 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/static/img/imagen_comida_login.jpg');
+    background-size: cover;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Contenedor principal del formulario */
+.content-area {
+    background-color: #ffffff; /* Blanco limpio para frescura */
+    padding: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    width: 900px; 
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+}
+
+
+/* Estilos del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Estilos de los campos de entrada */
+.form-group-2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group-2 label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group-2 input {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    transition: border-color 0.3s ease;
+}
+
+.form-group-2 input:focus {
+    border-color: #e67e22; /* Naranja para enfoque */
+    outline: none;
+}
+
+/* Botón de enviar */
+.btn-2 {
+    background-color: #e67e22; /* Naranja vibrante */
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.btn-2:hover {
+    background-color: #d35400; /* Naranja oscuro */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Gris para el botón cancelar */
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Gris más oscuro */
+}
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 768px) {
+    .content-area {
+        padding: 20px;
+    }
+
+    .form-group-2 input {
+        padding: 12px;
+    }
+
+    .btn-2, .btn-secondary {
+        width: 100%;
+    }
+}
+
+
+
+/* Contenedor de mensajes flash */
+.flash-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    pointer-events: none; /* Esto previene que el contenedor bloquee interacciones */
+}
+
+/* Estilos para los mensajes flash */
+.flash-message {
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    animation: slideIn 1s ease-out, fadeOut 3s 2s forwards;
+    pointer-events: auto; /* Esto asegura que el mensaje sea interactivo */
+}
+
+/* Animación para mostrar los mensajes */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Animación para que los mensajes se desvanezcan */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Estilos para los mensajes de éxito */
+.flash-success {
+    background-color: #28a745; /* Verde para mensajes de éxito */
+}
+
+/* Estilos para los mensajes de error */
+.flash-danger {
+    background-color: #dc3545; /* Rojo para mensajes de error */
+}
