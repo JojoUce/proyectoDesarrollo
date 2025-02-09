@@ -45,6 +45,26 @@ class Receta(db.Model):
 
     def __repr__(self):
         return f"<Receta {self.titulo}>"
+    
+class ParametrosNutricionales(db.Model):
+    __tablename__ = 'parametros_nutricionales'
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    receta_id = db.Column(db.String(36), db.ForeignKey('recetas.id'), nullable=False)
+    calorias = db.Column(db.Float, nullable=False)
+    proteinas = db.Column(db.Float, nullable=False)
+    carbohidratos = db.Column(db.Float, nullable=False)
+    grasas = db.Column(db.Float, nullable=False)
+    sodio = db.Column(db.Float, nullable=False)
+    azucar = db.Column(db.Float, nullable=False)
+    creado_en = db.Column(db.DateTime, default=datetime.utcnow)
+    actualizado_en = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relación inversa con Receta
+    receta = db.relationship('Receta', backref=db.backref('parametros_nutricionales', lazy=True))
+
+    def __repr__(self):
+        return f"<ParametrosNutricionales Receta {self.receta_id}>"
 
 
 # Modelo de Ingrediente

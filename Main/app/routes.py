@@ -4,7 +4,7 @@ import re
 from dotenv import load_dotenv
 from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from . import db
-from .models import MetricasUsuario, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
+from .models import MetricasUsuario, ParametrosNutricionales, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
 from flask_login import login_user, login_required, current_user, logout_user
 import pandas as pd
 import plotly.express as px
@@ -20,7 +20,7 @@ from google.cloud import vision
 
 
 load_dotenv()
-HF_API_KEY = ''
+HF_API_KEY = os.getenv('HF_API_KEY')
 qclient = Groq()
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../proyectoDesarrollo/Main/googlevision.json'
 
@@ -145,37 +145,30 @@ def perfil():
 @bp.route('/tablas', methods=['GET'])
 @login_required
 def tablas():
-    from .models import MetricasUsuario
-
-    metricas_especificas = [
-        "Pasos diarios",
-        "Calorías quemadas",
-        "Configuraciones activas",
-        "Búsquedas realizadas"
-    ]
-
-    resultados_metricas = {}
-
-
-    for metrica in metricas_especificas:
-        resultados_metricas[metrica] = (
-            MetricasUsuario.query
-            .filter(MetricasUsuario.usuario_id == current_user.id, MetricasUsuario.nombre_metrica == metrica)
-            .order_by(MetricasUsuario.actualizado_en.desc())  # Ordenamos por la fecha de actualización (más reciente primero)
-            .limit(5)
-            .all()
-        )
-
-    pasos_diarios_values = [m.valor_metrica for m in resultados_metricas["Pasos diarios"]]
-    calorias_quemadas_values = [m.valor_metrica for m in resultados_metricas["Calorías quemadas"]]
-    configuraciones_activas_values = [m.valor_metrica for m in resultados_metricas["Configuraciones activas"]]
-    busquedas_realizadas_values = [m.valor_metrica for m in resultados_metricas["Búsquedas realizadas"]]
-
-    return render_template('tablas.html', 
-                           pasos_diarios=pasos_diarios_values,
-                           calorias_quemadas=calorias_quemadas_values,
-                           configuraciones_activas=configuraciones_activas_values,
-                           busquedas_realizadas=busquedas_realizadas_values)
+    # Obtener la última receta generada del usuario actual
+    ultima_receta = db.session.query(Receta).filter(Receta.creado_por == current_user.id).order_by(Receta.creado_en.desc()).first()
+    
+    if ultima_receta:
+        # Obtener los parámetros nutricionales de la última receta
+        parametros_nutricionales = db.session.query(ParametrosNutricionales).filter(ParametrosNutricionales.receta_id == ultima_receta.id).first()
+        
+        if parametros_nutricionales:
+            # Extraer los datos nutricionales
+            calorias = parametros_nutricionales.calorias
+            proteinas = parametros_nutricionales.proteinas
+            carbohidratos = parametros_nutricionales.carbohidratos
+            grasas = parametros_nutricionales.grasas
+            sodio = parametros_nutricionales.sodio
+            azucar = parametros_nutricionales.azucar
+            
+            # Pasar los datos al template
+            return render_template('tablas.html', calorias=calorias, proteinas=proteinas, carbohidratos=carbohidratos, grasas=grasas, sodio=sodio, azucar=azucar)
+        else:
+            flash("No se encontraron parámetros nutricionales para esta receta.", "warning")
+    else:
+        flash("No tienes recetas generadas aún.", "warning")
+    
+    return redirect(url_for('index'))  # Redirigir al inicio si no se encuentra receta
 
 
 
@@ -306,21 +299,20 @@ def generar_receta():
     ).all()
 
     restricciones = [restriccion.nombre for restriccion in restricciones_db]
+    valor_restriccion = [restriccion.descripcion for restriccion in restricciones_db]
 
     if request.method == 'POST':
         if 'imagen' in request.files:
             imagen = request.files['imagen']
-            if 'imagen' in request.files:
-                imagen = request.files['imagen']
-                if imagen.filename != '' and allowed_file(imagen.filename):
-                    filename = secure_filename(imagen.filename)
-                    filepath = os.path.join("uploads", filename)
-                    imagen.save(filepath)
-                    
-                    # Enviar imagen a Google Vision para detectar ingredientes
-                    ingredientes_detectados = detectar_ingredientes_google_vision(filepath)
-                    print("Ingredientes detectados desde la imagen:", ingredientes_detectados)
-                    os.remove(filepath)
+            if imagen.filename != '' and allowed_file(imagen.filename):
+                filename = secure_filename(imagen.filename)
+                filepath = os.path.join("uploads", filename)
+                imagen.save(filepath)
+                
+                # Enviar imagen a Google Vision para detectar ingredientes
+                ingredientes_detectados = detectar_ingredientes_google_vision(filepath)
+                print("Ingredientes detectados desde la imagen:", ingredientes_detectados)
+                os.remove(filepath)
 
         # Si el usuario ingresa ingredientes manualmente
         ingredientes_manual = request.form.getlist('ingredientes')
@@ -330,7 +322,18 @@ def generar_receta():
             flash("No se detectaron ingredientes. Por favor, súbelo nuevamente o ingresa manualmente.", "warning")
             return redirect(url_for('generar_receta'))
 
-        prompt = f"Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones: {', '.join(restricciones)}, ademas no pongas mensajes similares a este: Si quieres que te genere otra receta dimelo. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."
+        prompt = f"""Genera una receta que use los ingredientes {', '.join(ingredientes)} y que cumpla con las siguientes restricciones obligatoriamente: {', '.join(restricciones)} con su detalle
+        {', '.join(valor_restriccion)}. Además, incluye los siguientes detalles nutricionales para la receta:
+
+        1. Calorías (kcal)
+        2. Proteínas (g)
+        3. Carbohidratos (g)
+        4. Grasas (g)
+        5. Sodio (mg)
+        6. Azúcar (g)
+
+        Por favor, incluye estos valores de manera clara y precisa. No pongas mensajes similares a este: 'Si quieres que te genere otra receta, dimelo'. Finalmente, coloca el nombre de la receta entre comillas sin negritas. Todo en Español."""
+
 
         try:
             stream_response = qclient.chat.completions.create(
@@ -359,6 +362,10 @@ def generar_receta():
                 imagen_url = generar_imagen_huggingface(nombre_receta)
             receta_limpia = limpiar_html_para_bd(response)
 
+            # EXTRAER LOS PARÁMETROS NUTRICIONALES
+            parametros_nutricionales = extraer_parametros_nutricionales(receta_limpia)
+            print("Parámetros nutricionales extraídos:", parametros_nutricionales)
+
             # Guardar en la base de datos
             if receta_limpia:
                 nueva_receta = Receta(
@@ -368,12 +375,49 @@ def generar_receta():
                 )
                 db.session.add(nueva_receta)
                 db.session.commit()
-                print(f"✅ Receta '{nombre_receta}' guardada en la base de datos.")
+
+                receta_id = nueva_receta.id  # Obtener el ID de la receta recién guardada
+
+                # GUARDAR LOS PARÁMETROS NUTRICIONALES EN LA BASE DE DATOS
+                nueva_entrada_parametros = ParametrosNutricionales(
+                    receta_id=receta_id,
+                    calorias=parametros_nutricionales.get("calorias", 0),
+                    proteinas=parametros_nutricionales.get("proteinas", 0),
+                    carbohidratos=parametros_nutricionales.get("carbohidratos", 0),
+                    grasas=parametros_nutricionales.get("grasas", 0),
+                    sodio=parametros_nutricionales.get("sodio", 0),
+                    azucar=parametros_nutricionales.get("azucar", 0)
+                )
+                db.session.add(nueva_entrada_parametros)
+                db.session.commit()
+                print(f"✅ Receta '{nombre_receta}' y parámetros nutricionales guardados en la base de datos.")
 
         except Exception as e:
             receta = f"<p><strong>Error:</strong> {str(e)}</p>"
 
     return render_template('generar_receta.html', receta=receta, restricciones=restricciones, imagen_url=imagen_url, random=random.random)
+
+def extraer_parametros_nutricionales(descripcion):
+    # Definir los patrones de búsqueda para los nutrientes
+    patrones = {
+        "calorias": r"calor(?:ías|ias):?\s*(\d+)\s?kcal",  # Maneja calorías con y sin acento
+        "proteinas": r"proteínas?:?\s*(\d+)\s*g",  # Maneja proteínas con y sin acento
+        "carbohidratos": r"carbohidratos?:?\s*(\d+)\s*g",  # Maneja carbohidratos con y sin acento
+        "grasas": r"grasas?:?\s*(\d+)\s*g",  # Maneja grasas con y sin acento
+        "sodio": r"sodio:?\s*(\d+)\s*mg",  # Maneja sodio
+        "azucar": r"azúcar:?\s*(\d+)\s*g"  # Maneja azúcar
+    }
+
+    parametros = {}
+    for clave, patron in patrones.items():
+        resultado = re.search(patron, descripcion, re.IGNORECASE)  # Añadir re.IGNORECASE para evitar problemas con mayúsculas/minúsculas
+        if resultado:
+            parametros[clave] = float(resultado.group(1))
+        else:
+            parametros[clave] = 0.0  # Si no se encuentra, asignar 0
+
+    return parametros
+
 
 def limpiar_html_para_bd(texto):
     """Limpia el HTML antes de guardarlo en la base de datos."""
