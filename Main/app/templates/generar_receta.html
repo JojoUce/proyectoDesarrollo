@@ -83,12 +83,13 @@
                             <button class="btn btn-primary mt-3 btnGenerarSugerencia" data-url="{{ url_for('bp.sugerencia_postre') }}">Sugerencia de Postre</button>
                             </div>
                             <!-- SECCIÓN DONDE SE MUESTRA LA RECETA Y LA IMAGEN -->
-                                <div class="receta-container mt-4">
-                                <h3>Receta Generada:</h3>
-                                <p></p> <!-- Aquí se mostrará la receta generada dinámicamente -->
-                                <h4>Imagen de la Receta:</h4>
-                                <img src="" alt="Imagen de la receta" class="img-fluid" style="max-width: 500px; border-radius: 10px; display: none;">
-                                </div>
+                            <div class="receta-container mt-4">
+                                <h3 id="tituloReceta" style="display: none;"></h3> <!-- Título de la receta -->
+                                <p id="descripcionReceta"></p> <!-- Aquí se mostrará la receta generada dinámicamente -->
+                                <h4 id="subtituloImagen" style="display: none;">Imagen de la Receta:</h4>
+                                <img id="imagenReceta" src="" alt="Imagen de la receta" class="img-fluid" 
+                                    style="max-width: 500px; border-radius: 10px; display: none;">
+                            </div>          
                         </div>
                         </form>
                         <!-- SECCIÓN DONDE SE MUESTRA LA RECETA Y LA IMAGEN -->
@@ -126,8 +127,8 @@
     <script src="/static/js/script.js"></script>
     <script>
         document.querySelectorAll(".btnGenerarSugerencia").forEach(button => {
-        button.addEventListener("click", function(event) {
-        event.preventDefault();  // 🚨 PREVIENE QUE LA PÁGINA SE RECARGUE
+    button.addEventListener("click", function(event) {
+        event.preventDefault();  // Evita que la página se recargue
 
         let url = this.dataset.url;
         fetch(url)
@@ -136,27 +137,34 @@
             let recetaTexto = data.descripcion;
 
             // 📌 EXTRAER EL NOMBRE DE LA RECETA (lo que está entre comillas)
-            let match = recetaTexto.match(/"([^"]+)"/);  // Busca texto entre comillas
-            let tituloReceta = match ? match[1] : data.titulo;  // Si encuentra un título, lo usa. Si no, usa el título normal.
-
-            // 📌 QUITAR EL TÍTULO DEL TEXTO PARA QUE SOLO QUEDE LA RECETA
+            let match = recetaTexto.match(/"([^"]+)"/);
+            let tituloReceta = match ? match[1] : data.titulo;
             let recetaSinTitulo = match ? recetaTexto.replace(match[0], "").trim() : recetaTexto;
 
-            // 📌 REEMPLAZA EL CONTENIDO EN LA PÁGINA
-            document.querySelector(".receta-container h3").textContent = tituloReceta;
-            document.querySelector(".receta-container p").innerHTML = recetaSinTitulo.replace(/\n/g, "<br>"); // Formatea saltos de línea
+            // 📌 SELECCIONA LOS ELEMENTOS DEL DOM
+            let h3Titulo = document.getElementById("tituloReceta");
+            let h4Imagen = document.getElementById("subtituloImagen");
+            let parrafoReceta = document.getElementById("descripcionReceta");
+            let imagen = document.getElementById("imagenReceta");
 
-            let imagen = document.querySelector(".receta-container img");
+            // 📌 ACTUALIZA EL CONTENIDO
+            h3Titulo.textContent = tituloReceta;
+            parrafoReceta.innerHTML = recetaSinTitulo.replace(/\n/g, "<br>");
+
+            // 📌 MUESTRA LOS ELEMENTOS OCULTOS
+            h3Titulo.style.display = "block";
+            h4Imagen.style.display = "block";
+
             if (data.imagen_url) {
                 imagen.src = data.imagen_url;
                 imagen.style.display = "block";
             } else {
                 imagen.style.display = "none";
             }
-            })
-            .catch(error => console.error("Error al obtener la sugerencia:", error));
-        });
+        })
+        .catch(error => console.error("Error al obtener la sugerencia:", error));
     });
+});
     </script>
 </body>
 </html>

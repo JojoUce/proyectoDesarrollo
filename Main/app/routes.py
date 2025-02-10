@@ -46,7 +46,7 @@ def login():
 
         if usuario and usuario.verificar_contrasena(contrasena):
             login_user(usuario)
-            flash('Inicio de sesión exitoso', 'success')
+            #flash('Inicio de sesión exitoso', 'success')
             return redirect(url_for('bp.generar_receta')) 
 
         flash('Usuario o contraseña incorrectos', 'danger')
