@@ -1,7 +1,7 @@
 import requests
 import re
 from dotenv import load_dotenv
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
 from . import db
 from .models import MetricasUsuario, ParametrosNutricionales, Receta, Usuario, UsuarioRestriccion, RestriccionDietetica
 from flask_login import login_user, login_required, current_user, logout_user
@@ -11,7 +11,6 @@ import uuid
 import random
 from werkzeug.utils import secure_filename
 from google.cloud import vision
-
 
 
 load_dotenv()
@@ -167,8 +166,6 @@ def tablas():
     return redirect(url_for('generar_receta'))  # Redirigir al inicio si no se encuentra receta
 
 
-
-
 @bp.route('/logout')
 @login_required 
 def logout():
@@ -214,7 +211,6 @@ def restricciones():
 
     # Obtener las restricciones dietéticas asociadas al usuario logueado
     restricciones_usuario = db.session.query(UsuarioRestriccion).join(RestriccionDietetica).filter(UsuarioRestriccion.usuario_id == current_user.id).all()
-
     return render_template('restricciones.html', restricciones=restricciones_usuario)
 
 @bp.route('/restricciones/editar/<uuid:id>', methods=['POST'])
@@ -477,6 +473,7 @@ def limpiar_html_para_bd(texto):
     
     return texto_limpio
 
+
 def generar_imagen_huggingface(nombre_receta):
     """Genera una imagen con Hugging Face y la guarda en app/static/img/ con un nombre único."""
     if not HF_API_KEY:
@@ -518,6 +515,64 @@ def generar_imagen_huggingface(nombre_receta):
         print(f"ERROR generando imagen con Hugging Face: {e}")
         return None
 
+
+@bp.route('/sugerencia_sopa', methods=['GET'])
+@login_required
+def sugerencia_sopa():
+    return generar_sugerencia("sopa")
+
+
+@bp.route('/sugerencia_plato_fuerte', methods=['GET'])
+@login_required
+def sugerencia_plato_fuerte():
+    return generar_sugerencia("plato_fuerte")
+
+
+@bp.route('/sugerencia_postre', methods=['GET'])
+@login_required
+def sugerencia_postre():
+    return generar_sugerencia("postre")
+
+
+def generar_sugerencia(tipo):
+    tipos_validos = {
+        "sopa": "Genera una receta estrictamente de una sopa...",
+        "plato_fuerte": "Genera una receta estrictamente de un plato fuerte...",
+        "postre": "Genera una receta estrictamente de un postre dulce..."
+    }
+
+    if tipo not in tipos_validos:
+        return jsonify({"error": "Tipo de sugerencia no válido"}), 400
+
+    try:
+        print(f"📢 Solicitando a Groq: {tipo}")
+        
+        response = qclient.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "Solo generar recetas nuevas en español sin almacenar datos previos."},
+                {"role": "user", "content": tipos_validos[tipo]}
+            ],
+            model="llama3-8b-8192"
+        )
+
+        receta_texto = response.choices[0].message.content if response.choices else f"No se pudo generar la sugerencia para {tipo.capitalize()}."
+        
+        print(f"🔍 Respuesta de Groq para {tipo}: {receta_texto}")
+
+        imagen_url = generar_imagen_huggingface(receta_texto) if receta_texto else "/static/img/default_recipe.jpg"
+
+        return jsonify({
+            "titulo": f"Sugerencia de {tipo.capitalize()}",
+            "descripcion": receta_texto,
+            "imagen_url": imagen_url
+        })
+
+    except Exception as e:
+        return jsonify({
+            "titulo": f"Error generando {tipo}",
+            "descripcion": str(e),
+            "imagen_url": "/static/img/error_image.jpg"
+        })
 
 
 def init_routes(app):
